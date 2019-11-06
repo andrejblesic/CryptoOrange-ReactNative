@@ -15,7 +15,7 @@ import * as testiranje from './test.js';
 
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
 
-const html = '<style>body {margin: 0}</style><div><div style="width: calc(100% + 32px)" id="chartdiv"></div><script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>'
+const html = '<style>body {margin: 0}</style><div><div style="width: 100%" id="chartdiv"></div><script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>'
 
 export default function HomeScreen() {
 
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'grey',
+    backgroundColor: 'red',
     marginTop: 30
   },
 });
