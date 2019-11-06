@@ -15,11 +15,11 @@ import * as testiranje from './test.js';
 
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
 
-const html = '<div><div id="chartdiv"></div><script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>'
+const html = '<style>body {margin: 0}</style><div><div style="width: calc(100% + 32px)" id="chartdiv"></div><script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>'
 
 export default function HomeScreen() {
 
-  const width = Dimensions.get('window').width - 16;
+  const width = Dimensions.get('window').width;
   const height = Dimensions.get('window').height;
 
   const injectJS = testiranje.lol(width);
@@ -152,8 +152,7 @@ const styles = StyleSheet.create({
   WebViewStyle: {
     flex: 2,
     backgroundColor: 'orange',
-    height: 340,
-    maxHeight: 340
+    height: 300
   },
   container: {
     flex: 1,
