@@ -11,12 +11,9 @@ import {
 } from 'react-native';
 import { WebView, Dimensions } from 'react-native';
 import { MonoText } from '../components/StyledText';
+import * as testiranje from './test.js';
 
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
-
-// const chartHtml = require('../assets/chart.html');
-// console.log(chartHtml);
-console.log('benez');
 
 const html = '<div><div id="chartdiv"></div><script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>'
 
@@ -25,19 +22,90 @@ export default function HomeScreen() {
   const width = Dimensions.get('window').width - 16;
   const height = Dimensions.get('window').height;
 
-  const injectJS = `const websocketUrl = 'ws://192.168.0.180:8000/charts';const ws = new WebSocket(websocketUrl);const chart = LightweightCharts.createChart(document.getElementById('chartdiv'), { width: ${width}, height: 300 });const areaSeries = chart.addAreaSeries();chart.applyOptions({timeScale: {rightOffset: 12,barSpacing: 3,fixLeftEdge: false,lockVisibleTimeRangeOnResize: true,rightBarStaysOnScroll: true,borderVisible: false,borderColor: '#fff000',visible: true,timeVisible: true,secondsVisible: true,},layout: {backgroundColor: '#282c34',textColor: '#696969',fontSize: 12,fontFamily: 'Calibri',},});ws.onmessage = event => {const chartData = JSON.parse(event.data);if (chartData.chart) {for (const item in chartData.chart) {chartData.chart[item].time = Math.floor(chartData.chart[item].time / 1000)}areaSeries.setData(chartData.chart);} else if (!chartData.chart) {chartData.time = Math.floor(chartData.time / 1000);areaSeries.update(chartData);}};`
+  const injectJS = testiranje.lol(width);
 
   return (
-    <View style={styles.container}>
-      <WebView
-        source={{html: html}}
-        domStorageEnabled={true}
-        javaScriptEnabled={true}
-        style={styles.WebViewStyle}
-        injectedJavaScript={injectJS}
-      />
-      <Text style={{marginTop: -50}}>BENEZ</Text>
-    </View>
+    <ScrollView style={styles.container}>
+      <View style={{backgroundColor: 'white', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+      <View style={{backgroundColor: 'brown', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+      <View style={{backgroundColor: 'lightblue', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+      <View style={{backgroundColor: 'darkblue', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+      <View style={{backgroundColor: 'purple', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+      <View style={{backgroundColor: 'grey', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+      <View style={{backgroundColor: 'lightgrey', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+      <View style={{backgroundColor: 'pink', flex: 2, width: '50%', minWidth: '100%', alignSelf: 'stretch'}}>
+        <WebView
+          source={{html: html}}
+          domStorageEnabled={true}
+          javaScriptEnabled={true}
+          style={styles.WebViewStyle}
+          injectedJavaScript={injectJS}
+        />
+      </View>
+      <View style={{backgroundColor: 'red', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+      <View style={{backgroundColor: 'green', flex: 1}}>
+        <Text>test4</Text>
+        <Text>test5</Text>
+        <Text>test6</Text>
+      </View>
+      <View style={{backgroundColor: 'blue', flex: 1}}>
+        <Text>test7</Text>
+        <Text>test8</Text>
+        <Text>test9</Text>
+      </View>
+      <View style={{backgroundColor: 'yellow', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+      <View style={{backgroundColor: 'aqua', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+      <View style={{backgroundColor: 'orange', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+      <View style={{backgroundColor: 'darkgreen', flex: 1}}>
+        <Text>test1</Text>
+        <Text>test2</Text>
+        <Text>test3</Text>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -82,96 +150,22 @@ function handleHelpPress() {
 
 const styles = StyleSheet.create({
   WebViewStyle: {
-    position: 'relative',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 30,
-    height: 0
+    flex: 2,
+    backgroundColor: 'orange',
+    height: 340,
+    maxHeight: 340
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
+    backgroundColor: 'grey',
+    marginTop: 30
   },
 });
+
+// <WebView
+//   source={{html: html}}
+//   domStorageEnabled={true}
+//   javaScriptEnabled={true}
+//   style={styles.WebViewStyle}
+//   injectedJavaScript={injectJS}
+// />
