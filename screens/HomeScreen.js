@@ -1,24 +1,17 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
 import { WebView, Dimensions } from 'react-native';
+import { Button, ThemeProvider, Header } from 'react-native-elements';
 import { MonoText } from '../components/StyledText';
 import * as testiranje from './test.js';
 
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
 
-const html = '<style>body {margin: 0}</style><div><div style="width: 100%" id="chartdiv"></div><script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>'
+const html =
+  '<style>body {margin: 0}</style><div><div style="width: 100%" id="chartdiv"></div><script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>';
 
 export default function HomeScreen() {
-
   const width = Dimensions.get('window').width;
   const height = Dimensions.get('window').height;
 
@@ -26,91 +19,87 @@ export default function HomeScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={{backgroundColor: 'white', flex: 1}}>
-        <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
+      <View style={styles.contentBox}>
+        <Text style={{ fontWeight: 'bold', fontSize: 20 }}>
+          BTC/USD
+          <Text style={{ color: 'red' }}>10.00000000000</Text>
+        </Text>
       </View>
-      <View style={{backgroundColor: 'brown', flex: 1}}>
-        <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
-      </View>
-      <View style={{backgroundColor: 'lightblue', flex: 1}}>
-        <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
-      </View>
-      <View style={{backgroundColor: 'darkblue', flex: 1}}>
-        <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
-      </View>
-      <View style={{backgroundColor: 'purple', flex: 1}}>
-        <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
-      </View>
-      <View style={{backgroundColor: 'grey', flex: 1}}>
-        <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
-      </View>
-      <View style={{backgroundColor: 'lightgrey', flex: 1}}>
-        <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
-      </View>
-      <View style={{backgroundColor: 'pink', flex: 2, width: '50%', minWidth: '100%', alignSelf: 'stretch'}}>
+      <View
+        style={{
+          backgroundColor: '#282c34',
+          flex: 2,
+          width: '50%',
+          minWidth: '100%',
+          alignSelf: 'stretch',
+          borderTopWidth: 1,
+          borderBottomWidth: 1,
+          borderTopColor: 'black',
+          borderBottomColor: 'black',
+          marginBottom: 10
+        }}
+      >
         <WebView
-          source={{html: html}}
+          source={{ html: html }}
           domStorageEnabled={true}
           javaScriptEnabled={true}
           style={styles.WebViewStyle}
           injectedJavaScript={injectJS}
         />
       </View>
-      <View style={{backgroundColor: 'red', flex: 1}}>
+      <View style={styles.contentBox}>
         <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
+        <Text>test1</Text>
+        <Text>test1</Text>
       </View>
-      <View style={{backgroundColor: 'green', flex: 1}}>
+      <View style={styles.contentBox}>
+        <Text>test2</Text>
+        <Text>test2</Text>
+        <Text>test2</Text>
+      </View>
+      <View style={styles.contentBox}>
+        <Text>test1</Text>
+        <Text>test1</Text>
+        <Text>test1</Text>
+      </View>
+      <View style={styles.contentBox}>
+        <Text>test2</Text>
+        <Text>test2</Text>
+        <Text>test2</Text>
+      </View>
+      <View style={styles.contentBox}>
+        <Text style={styles.title}>
+          The title and onPress handler are required. It is recommended to set
+          accessibilityLabel to help make your app usable by everyone.
+        </Text>
+        <Button
+          title="Press me"
+          onPress={() => Alert.alert('Simple Button pressed')}
+        />
+      </View>
+      <View style={{ backgroundColor: 'yellow', flex: 1 }}>
         <Text>test4</Text>
+        <Text>test4</Text>
+        <Text>test4</Text>
+      </View>
+      <View style={{ backgroundColor: 'purple', flex: 1 }}>
         <Text>test5</Text>
-        <Text>test6</Text>
-      </View>
-      <View style={{backgroundColor: 'blue', flex: 1}}>
-        <Text>test7</Text>
-        <Text>test8</Text>
-        <Text>test9</Text>
-      </View>
-      <View style={{backgroundColor: 'yellow', flex: 1}}>
-        <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
-      </View>
-      <View style={{backgroundColor: 'aqua', flex: 1}}>
-        <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
-      </View>
-      <View style={{backgroundColor: 'orange', flex: 1}}>
-        <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
-      </View>
-      <View style={{backgroundColor: 'darkgreen', flex: 1}}>
-        <Text>test1</Text>
-        <Text>test2</Text>
-        <Text>test3</Text>
+        <Text>test5</Text>
+        <Text>test5</Text>
       </View>
     </ScrollView>
   );
 }
 
 HomeScreen.navigationOptions = {
-  header: null,
+  title: 'Home',
+  headerStyle: {
+    backgroundColor: '#282c34'
+  },
+  headerTitleStyle: {
+    fontWeight: 'bold',
+    color: 'white'
+  }
 };
 
 function DevelopmentModeNotice() {
@@ -151,14 +140,23 @@ function handleHelpPress() {
 const styles = StyleSheet.create({
   WebViewStyle: {
     flex: 2,
-    backgroundColor: 'orange',
+    backgroundColor: '#3f444d',
     height: 300
   },
   container: {
     flex: 1,
-    backgroundColor: 'red',
-    marginTop: 30
+    backgroundColor: '#343942',
+    marginTop: 0
   },
+  contentBox: {
+    backgroundColor: '#282c34',
+    flex: 1,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderTopColor: 'black',
+    borderBottomColor: 'black',
+    marginBottom: 10
+  }
 });
 
 // <WebView
