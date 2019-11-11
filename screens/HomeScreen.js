@@ -8,14 +8,20 @@ import * as testiranje from './test.js';
 
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
 
-const html =
-  '<style>body {margin: 0}</style><div><div style="width: 100%" id="chartdiv"></div><script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>';
+const chartHtml = `
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1 mimum-scale=1">
+<style>body {margin: 0}</style>
+<body>
+  <div id="chartdiv"></div>
+</body>
+<script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>
+`;
 
 export default function HomeScreen() {
   const width = Dimensions.get('window').width;
   const height = Dimensions.get('window').height;
 
-  const injectJS = testiranje.lol(width);
+  const injectJS = testiranje.areaChart(width);
 
   return (
     <ScrollView style={styles.container}>
@@ -40,7 +46,9 @@ export default function HomeScreen() {
         }}
       >
         <WebView
-          source={{ html: html }}
+          originWhitelist={['*']}
+          useWebKit={true}
+          source={{ html: chartHtml }}
           domStorageEnabled={true}
           javaScriptEnabled={true}
           style={styles.WebViewStyle}
