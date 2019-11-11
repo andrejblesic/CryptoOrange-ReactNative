@@ -1,27 +1,44 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
-import { WebView, Dimensions } from 'react-native';
+import { WebView, Dimensions, TouchableWithoutFeedback, TouchableOpacity  } from 'react-native';
 import { Button, ThemeProvider, Header } from 'react-native-elements';
 import { MonoText } from '../components/StyledText';
 import * as testiranje from './test.js';
 
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
 
-const chartHtml = `
+const areaChartHtml = `
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1 mimum-scale=1">
 <style>body {margin: 0}</style>
 <body>
-  <div id="chartdiv"></div>
+  <div id="areachartdiv"></div>
+</body>
+<script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>
+`;
+
+const candleChartHtml = `
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1 mimum-scale=1">
+<style>body {margin: 0}</style>
+<body>
+  <div id="candlechartdiv"></div>
 </body>
 <script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>
 `;
 
 export default function HomeScreen() {
+
+  const [scrollEnabled, setScroll] = useState(true);
+
   const width = Dimensions.get('window').width;
   const height = Dimensions.get('window').height;
 
-  const injectJS = testiranje.areaChart(width);
+  const areaChartJS = testiranje.areaChart(width);
+  const candleChartJS = testiranje.candleChart(width);
+
+  const disableScroll = () => {
+    alert('lol')
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -30,6 +47,31 @@ export default function HomeScreen() {
           BTC/USD
           <Text style={{ color: 'red' }}>10.00000000000</Text>
         </Text>
+      </View>
+      <View
+        onPressIn={disableScroll}
+        style={{
+          backgroundColor: '#282c34',
+          flex: 2,
+          width: '50%',
+          minWidth: '100%',
+          alignSelf: 'stretch',
+          borderTopWidth: 1,
+          borderBottomWidth: 1,
+          borderTopColor: 'black',
+          borderBottomColor: 'black',
+          marginBottom: 10
+        }}
+      >
+        <WebView
+          originWhitelist={['*']}
+          useWebKit={true}
+          source={{ html: areaChartHtml }}
+          domStorageEnabled={true}
+          javaScriptEnabled={true}
+          style={styles.WebViewStyle}
+          injectedJavaScript={areaChartJS}
+        />
       </View>
       <View
         style={{
@@ -48,11 +90,11 @@ export default function HomeScreen() {
         <WebView
           originWhitelist={['*']}
           useWebKit={true}
-          source={{ html: chartHtml }}
+          source={{ html: candleChartHtml }}
           domStorageEnabled={true}
           javaScriptEnabled={true}
           style={styles.WebViewStyle}
-          injectedJavaScript={injectJS}
+          injectedJavaScript={candleChartJS}
         />
       </View>
       <View style={styles.contentBox}>
