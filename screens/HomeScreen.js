@@ -1,8 +1,25 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
-import { WebView, Dimensions, TouchableWithoutFeedback, TouchableOpacity  } from 'react-native';
-import { Button, ThemeProvider, Header } from 'react-native-elements';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  TextInput
+} from 'react-native';
+import {
+  WebView,
+  Dimensions,
+  TouchableWithoutFeedback,
+  TouchableOpacity
+} from 'react-native';
+import {
+  Button,
+  ThemeProvider,
+  Header,
+  SearchBar
+} from 'react-native-elements';
 import { MonoText } from '../components/StyledText';
 import * as testiranje from './test.js';
 
@@ -27,7 +44,6 @@ const candleChartHtml = `
 `;
 
 export default function HomeScreen() {
-
   const [scrollEnabled, setScroll] = useState(true);
 
   const width = Dimensions.get('window').width;
@@ -37,11 +53,40 @@ export default function HomeScreen() {
   const candleChartJS = testiranje.candleChart(width);
 
   const disableScroll = () => {
-    alert('lol')
-  }
+    alert('lol');
+  };
 
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.container}>
+        <FlatList
+          data={[{ key: 'Beniz' }, { key: 'Benez' }, { key: 'Benito' }]}
+          renderItem={({ item }) => <Text>{item.key}</Text>}
+          ListHeaderComponent={
+            <View style={{ height: 320 }}>
+              <TextInput
+                style={{
+                  height: 40,
+                  width: '50%',
+                  borderColor: 'gray',
+                  borderWidth: 1
+                }}
+                placeholder={'Search'}
+              />
+              <WebView
+                originWhitelist={['*']}
+                useWebKit={true}
+                source={{ html: areaChartHtml }}
+                domStorageEnabled={true}
+                javaScriptEnabled={true}
+                style={styles.WebViewStyle}
+                injectedJavaScript={areaChartJS}
+              />
+            </View>
+          }
+        />
+      </View>
+
       <View style={styles.contentBox}>
         <Text style={{ fontWeight: 'bold', fontSize: 20 }}>
           BTC/USD
@@ -62,17 +107,7 @@ export default function HomeScreen() {
           borderBottomColor: 'black',
           marginBottom: 10
         }}
-      >
-        <WebView
-          originWhitelist={['*']}
-          useWebKit={true}
-          source={{ html: areaChartHtml }}
-          domStorageEnabled={true}
-          javaScriptEnabled={true}
-          style={styles.WebViewStyle}
-          injectedJavaScript={areaChartJS}
-        />
-      </View>
+      ></View>
       <View
         style={{
           backgroundColor: '#282c34',
@@ -116,26 +151,6 @@ export default function HomeScreen() {
         <Text>test2</Text>
         <Text>test2</Text>
         <Text>test2</Text>
-      </View>
-      <View style={styles.contentBox}>
-        <Text style={styles.title}>
-          The title and onPress handler are required. It is recommended to set
-          accessibilityLabel to help make your app usable by everyone.
-        </Text>
-        <Button
-          title="Press me"
-          onPress={() => Alert.alert('Simple Button pressed')}
-        />
-      </View>
-      <View style={{ backgroundColor: 'yellow', flex: 1 }}>
-        <Text>test4</Text>
-        <Text>test4</Text>
-        <Text>test4</Text>
-      </View>
-      <View style={{ backgroundColor: 'purple', flex: 1 }}>
-        <Text>test5</Text>
-        <Text>test5</Text>
-        <Text>test5</Text>
       </View>
     </ScrollView>
   );
