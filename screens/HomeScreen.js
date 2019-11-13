@@ -1,5 +1,5 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -21,7 +21,7 @@ import {
 } from 'react-native-elements';
 import { MonoText } from '../components/StyledText';
 import * as testiranje from './test.js';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Zocial } from '@expo/vector-icons';
 
 const coinbaseWS = 'wss://ws-feed.pro.coinbase.com';
 
@@ -93,14 +93,25 @@ export default function HomeScreen() {
 
   const [selectedChart, setChart] = useState('area');
   const [currencyPair, setPair] = useState('BTC-USD');
+  const [socketOpened, setSocketOpened] = useState(false);
+  const [currPrice, setPrice] = useState(undefined);
+  const [priceDrop, setDrop] = useState(null);
+  const [timeScale, setTimeScale] = useState('1h');
+
+  const refContainer = useRef(currPrice);
+
+  let currentPrice = 0;
 
   useEffect(() => {
-    opensocket(coinbaseWS);
-  });
+    if (!socketOpened) {
+      opensocket(coinbaseWS);
+    }
+  }, [socketOpened, currPrice]);
 
   const opensocket = (coinbaseWS) => {
     const ws = new WebSocket(coinbaseWS);
     ws.onopen = () => {
+      setSocketOpened(true);
       ws.send(JSON.stringify(
         {
           'type': 'subscribe',
@@ -110,8 +121,23 @@ export default function HomeScreen() {
       ));
     }
     ws.onmessage = (message) => {
-      console.log(JSON.parse(message.data).price);
+      console.log(refContainer.current)
+      const newPrice = parseFloat(JSON.parse(message.data).price);
+      // console.log(getCurrent());
+      if (currPrice > newPrice) {
+        setDrop(true);
+      } else if (currPrice < newPrice) {
+        setDrop(false);
+      } else {
+        setDrop(null);
+      }
+      currentPrice = newPrice.toFixed(2)
+      setPrice(newPrice.toFixed(2));
     }
+  }
+
+  const getCurrent = () => {
+    return currentPrice;
   }
 
   const width = Dimensions.get('window').width;
@@ -119,16 +145,6 @@ export default function HomeScreen() {
 
   const areaChartJS = testiranje.areaChart(width);
   const candleChartJS = testiranje.candleChart(width);
-
-  const disableScroll = () => {
-    console.log('disabled scroll')
-    setScroll(false);
-  };
-
-  const enableScroll = () => {
-    console.log('enabled scroll')
-    setScroll(true);
-  }
 
   const changeChart = () => {
     if (selectedChart === 'candle') {
@@ -145,12 +161,19 @@ export default function HomeScreen() {
         renderItem={({ item }) => <Text>{item.key}</Text>}
         ListHeaderComponent={
           <View>
-            <Text>LOL</Text>
+            <View style={{margin: 10, flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Zocial name="bitcoin" size={32} color="orange" />
+              <Text style={{color: priceDrop === true ? 'red' : (priceDrop === false ? 'green' : 'white'), fontSize: 20}}>{currPrice}</Text>
+            </View>
             {selectedChart === 'area' ? <AreaChart /> : <CandleChart />}
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-              <TouchableOpacity style={{width: '10%', backgroundColor: 'green'}} onPress={changeChart}><Text>{selectedChart === 'area' ? 'Candle' : 'Area'}</Text></TouchableOpacity>
-              <TouchableOpacity style={{width: '10%', backgroundColor: 'green'}} onPress={changeChart}><Text>{selectedChart === 'area' ? 'Candle' : 'Area'}</Text></TouchableOpacity>
-              <TouchableOpacity style={{width: '10%', backgroundColor: 'green'}} onPress={changeChart}><Text>{selectedChart === 'area' ? 'Candle' : 'Area'}</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>1m</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>5m</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>15m</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>1h</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>3h</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>1D</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>1W</Text></TouchableOpacity>
               <TouchableOpacity onPress={changeChart} style={{width: '10%', borderColor: 'orange', borderWidth: 1, borderRadius: 2}}>
                 <AntDesign name={selectedChart === 'area' ? 'barschart' : 'linechart'} size={32} color='orange' />
               </TouchableOpacity>
@@ -254,11 +277,14 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
     marginBottom: 10
   },
-  buttonStyle: {
-    width: 30,
-    maxWidth: 30,
+  timeScaleButton: {
+    width: 'auto',
+    flex: 1,
+    justifyContent: 'center'
+  },
+  timeScaleText: {
     textAlign: 'center',
-    backgroundColor: 'red'
+    color: 'white'
   }
 });
 
