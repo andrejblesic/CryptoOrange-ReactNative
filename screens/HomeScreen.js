@@ -11,8 +11,7 @@ import {
 import {
   WebView,
   Dimensions,
-  TouchableWithoutFeedback,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import {
   Button,
@@ -22,6 +21,9 @@ import {
 } from 'react-native-elements';
 import { MonoText } from '../components/StyledText';
 import * as testiranje from './test.js';
+import { AntDesign } from '@expo/vector-icons';
+
+const coinbaseWS = 'wss://ws-feed.pro.coinbase.com';
 
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
 
@@ -43,8 +45,74 @@ const candleChartHtml = `
 <script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>
 `;
 
+function AreaChart() {
+
+  const width = Dimensions.get('window').width;
+  const height = Dimensions.get('window').height;
+
+  const areaChartJS = testiranje.areaChart(width);
+
+  return(
+    <View>
+      <WebView
+        originWhitelist={['*']}
+        useWebKit={true}
+        source={{ html: areaChartHtml }}
+        domStorageEnabled={true}
+        javaScriptEnabled={true}
+        style={styles.WebViewStyle}
+        injectedJavaScript={areaChartJS}
+      />
+    </View>
+  );
+}
+
+function CandleChart() {
+
+  const width = Dimensions.get('window').width;
+  const height = Dimensions.get('window').height;
+
+  const candleChartJS = testiranje.candleChart(width);
+
+  return(
+    <View>
+      <WebView
+        originWhitelist={['*']}
+        useWebKit={true}
+        source={{ html: candleChartHtml }}
+        domStorageEnabled={true}
+        javaScriptEnabled={true}
+        style={styles.WebViewStyle}
+        injectedJavaScript={candleChartJS}
+      />
+    </View>
+  );
+}
+
 export default function HomeScreen() {
-  const [scrollEnabled, setScroll] = useState(true);
+
+  const [selectedChart, setChart] = useState('area');
+  const [currencyPair, setPair] = useState('BTC-USD');
+
+  useEffect(() => {
+    opensocket(coinbaseWS);
+  });
+
+  const opensocket = (coinbaseWS) => {
+    const ws = new WebSocket(coinbaseWS);
+    ws.onopen = () => {
+      ws.send(JSON.stringify(
+        {
+          'type': 'subscribe',
+          'product_ids': [currencyPair],
+          'channels': ['ticker']
+        }
+      ));
+    }
+    ws.onmessage = (message) => {
+      console.log(JSON.parse(message.data).price);
+    }
+  }
 
   const width = Dimensions.get('window').width;
   const height = Dimensions.get('window').height;
@@ -53,84 +121,48 @@ export default function HomeScreen() {
   const candleChartJS = testiranje.candleChart(width);
 
   const disableScroll = () => {
-    alert('lol');
+    console.log('disabled scroll')
+    setScroll(false);
   };
+
+  const enableScroll = () => {
+    console.log('enabled scroll')
+    setScroll(true);
+  }
+
+  const changeChart = () => {
+    if (selectedChart === 'candle') {
+      setChart('area');
+    } else {
+      setChart('candle');
+    }
+  }
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.container}>
-        <FlatList
-          data={[{ key: 'Beniz' }, { key: 'Benez' }, { key: 'Benito' }]}
-          renderItem={({ item }) => <Text>{item.key}</Text>}
-          ListHeaderComponent={
-            <View style={{ height: 320 }}>
-              <TextInput
-                style={{
-                  height: 40,
-                  width: '50%',
-                  borderColor: 'gray',
-                  borderWidth: 1
-                }}
-                placeholder={'Search'}
-              />
-              <WebView
-                originWhitelist={['*']}
-                useWebKit={true}
-                source={{ html: areaChartHtml }}
-                domStorageEnabled={true}
-                javaScriptEnabled={true}
-                style={styles.WebViewStyle}
-                injectedJavaScript={areaChartJS}
-              />
-            </View>
-          }
-        />
-      </View>
+      <FlatList
 
+        renderItem={({ item }) => <Text>{item.key}</Text>}
+        ListHeaderComponent={
+          <View>
+            <Text>LOL</Text>
+            {selectedChart === 'area' ? <AreaChart /> : <CandleChart />}
+            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+              <TouchableOpacity style={{width: '10%', backgroundColor: 'green'}} onPress={changeChart}><Text>{selectedChart === 'area' ? 'Candle' : 'Area'}</Text></TouchableOpacity>
+              <TouchableOpacity style={{width: '10%', backgroundColor: 'green'}} onPress={changeChart}><Text>{selectedChart === 'area' ? 'Candle' : 'Area'}</Text></TouchableOpacity>
+              <TouchableOpacity style={{width: '10%', backgroundColor: 'green'}} onPress={changeChart}><Text>{selectedChart === 'area' ? 'Candle' : 'Area'}</Text></TouchableOpacity>
+              <TouchableOpacity onPress={changeChart} style={{width: '10%', borderColor: 'orange', borderWidth: 1, borderRadius: 2}}>
+                <AntDesign name={selectedChart === 'area' ? 'barschart' : 'linechart'} size={32} color='orange' />
+              </TouchableOpacity>
+            </View>
+          </View>
+        }
+      />
       <View style={styles.contentBox}>
         <Text style={{ fontWeight: 'bold', fontSize: 20 }}>
           BTC/USD
           <Text style={{ color: 'red' }}>10.00000000000</Text>
         </Text>
-      </View>
-      <View
-        onPressIn={disableScroll}
-        style={{
-          backgroundColor: '#282c34',
-          flex: 2,
-          width: '50%',
-          minWidth: '100%',
-          alignSelf: 'stretch',
-          borderTopWidth: 1,
-          borderBottomWidth: 1,
-          borderTopColor: 'black',
-          borderBottomColor: 'black',
-          marginBottom: 10
-        }}
-      ></View>
-      <View
-        style={{
-          backgroundColor: '#282c34',
-          flex: 2,
-          width: '50%',
-          minWidth: '100%',
-          alignSelf: 'stretch',
-          borderTopWidth: 1,
-          borderBottomWidth: 1,
-          borderTopColor: 'black',
-          borderBottomColor: 'black',
-          marginBottom: 10
-        }}
-      >
-        <WebView
-          originWhitelist={['*']}
-          useWebKit={true}
-          source={{ html: candleChartHtml }}
-          domStorageEnabled={true}
-          javaScriptEnabled={true}
-          style={styles.WebViewStyle}
-          injectedJavaScript={candleChartJS}
-        />
       </View>
       <View style={styles.contentBox}>
         <Text>test1</Text>
@@ -221,6 +253,12 @@ const styles = StyleSheet.create({
     borderTopColor: 'black',
     borderBottomColor: 'black',
     marginBottom: 10
+  },
+  buttonStyle: {
+    width: 30,
+    maxWidth: 30,
+    textAlign: 'center',
+    backgroundColor: 'red'
   }
 });
 
