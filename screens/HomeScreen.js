@@ -1,5 +1,5 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, forceUpdate } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -20,11 +20,10 @@ import {
   SearchBar
 } from 'react-native-elements';
 import { MonoText } from '../components/StyledText';
-import * as testiranje from './test.js';
-import { AntDesign, Zocial } from '@expo/vector-icons';
+import * as chartJS from './chartJS.js';
+import { AntDesign, Zocial, Entypo } from '@expo/vector-icons';
 
 const coinbaseWS = 'wss://ws-feed.pro.coinbase.com';
-
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
 
 const areaChartHtml = `
@@ -45,12 +44,16 @@ const candleChartHtml = `
 <script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>
 `;
 
-function AreaChart() {
+function AreaChart(timeScale) {
 
   const width = Dimensions.get('window').width;
   const height = Dimensions.get('window').height;
+  const [areaChartJS, setAreaChartJS] = useState(chartJS.areaChart(width, timeScale.timeScale));
 
-  const areaChartJS = testiranje.areaChart(width);
+  useEffect(() => {
+    console.log(timeScale.timeScale);
+    setAreaChartJS(chartJS.areaChart(width, timeScale.timeScale));
+  }, [areaChartJS, timeScale]);
 
   return(
     <View>
@@ -67,12 +70,12 @@ function AreaChart() {
   );
 }
 
-function CandleChart() {
+function CandleChart(timeScale) {
 
   const width = Dimensions.get('window').width;
   const height = Dimensions.get('window').height;
 
-  const candleChartJS = testiranje.candleChart(width);
+  const candleChartJS = chartJS.candleChart(width);
 
   return(
     <View>
@@ -94,11 +97,9 @@ export default function HomeScreen() {
   const [selectedChart, setChart] = useState('area');
   const [currencyPair, setPair] = useState('BTC-USD');
   const [socketOpened, setSocketOpened] = useState(false);
-  const [currPrice, setPrice] = useState(undefined);
+  const [currPrice, setPrice] = useState(0);
   const [priceDrop, setDrop] = useState(null);
   const [timeScale, setTimeScale] = useState('1h');
-
-  const refContainer = useRef(currPrice);
 
   let currentPrice = 0;
 
@@ -121,30 +122,20 @@ export default function HomeScreen() {
       ));
     }
     ws.onmessage = (message) => {
-      console.log(refContainer.current)
-      const newPrice = parseFloat(JSON.parse(message.data).price);
-      // console.log(getCurrent());
-      if (currPrice > newPrice) {
-        setDrop(true);
-      } else if (currPrice < newPrice) {
-        setDrop(false);
-      } else {
-        setDrop(null);
+      if (JSON.parse(message.data).type === 'ticker') {
+        const newPrice = parseFloat(JSON.parse(message.data).price);
+        if (currentPrice > newPrice) {
+          setDrop(true);
+        } else if (currentPrice < newPrice) {
+          setDrop(false);
+        } else {
+          setDrop(null);
+        }
+        currentPrice = newPrice.toFixed(2)
+        setPrice(newPrice.toFixed(2));
       }
-      currentPrice = newPrice.toFixed(2)
-      setPrice(newPrice.toFixed(2));
     }
   }
-
-  const getCurrent = () => {
-    return currentPrice;
-  }
-
-  const width = Dimensions.get('window').width;
-  const height = Dimensions.get('window').height;
-
-  const areaChartJS = testiranje.areaChart(width);
-  const candleChartJS = testiranje.candleChart(width);
 
   const changeChart = () => {
     if (selectedChart === 'candle') {
@@ -154,27 +145,69 @@ export default function HomeScreen() {
     }
   }
 
+  const changeTimeScale = (timeScale) => {
+    setTimeScale(timeScale);
+  }
+
   return (
     <ScrollView style={styles.container}>
       <FlatList
-
         renderItem={({ item }) => <Text>{item.key}</Text>}
         ListHeaderComponent={
           <View>
             <View style={{margin: 10, flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-              <Zocial name="bitcoin" size={32} color="orange" />
-              <Text style={{color: priceDrop === true ? 'red' : (priceDrop === false ? 'green' : 'white'), fontSize: 20}}>{currPrice}</Text>
+              <Zocial style={{flex: 1}} name="bitcoin" size={44} color="orange" />
+              <View style={{flex: 2, alignItems: 'center', justifyContent: 'flex-end', flexDirection: 'row'}}>
+                <Text style={{color: 'white', fontSize: 16, marginRight: 5, marginBottom: -6}}>BTC-USD</Text>
+                <Text style={{color: priceDrop === true ? 'red' : (priceDrop === false ? 'green' : 'white'), fontSize: 24}}>{currPrice}</Text>
+                <Entypo name={priceDrop === true ? 'triangle-down' : (priceDrop === false ? 'triangle-up' : 'minus')} size={16} color={priceDrop === true ? 'red' : (priceDrop === false ? 'green' : 'white')} />
+              </View>
             </View>
-            {selectedChart === 'area' ? <AreaChart /> : <CandleChart />}
-            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>1m</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>5m</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>15m</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>1h</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>3h</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>1D</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.timeScaleButton}><Text style={styles.timeScaleText}>1W</Text></TouchableOpacity>
-              <TouchableOpacity onPress={changeChart} style={{width: '10%', borderColor: 'orange', borderWidth: 1, borderRadius: 2}}>
+            {selectedChart === 'area' ? <AreaChart timeScale={timeScale} /> : <CandleChart timeScale={timeScale} />}
+            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 5, marginBottom: 5}}>
+              <TouchableOpacity
+                style={timeScale === '1m' ? styles.selectedTimeScaleButton : styles.timeScaleButton}
+                onPress={() => changeTimeScale('1m')}
+                >
+                <Text style={styles.timeScaleText}>1m</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={timeScale === '5m' ? styles.selectedTimeScaleButton : styles.timeScaleButton}
+                onPress={() => changeTimeScale('5m')}
+                >
+                <Text style={styles.timeScaleText}>5m</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={timeScale === '15m' ? styles.selectedTimeScaleButton : styles.timeScaleButton}
+                onPress={() => changeTimeScale('15m')}
+                >
+                <Text style={styles.timeScaleText}>15m</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={timeScale === '1h' ? styles.selectedTimeScaleButton : styles.timeScaleButton}
+                onPress={() => changeTimeScale('1h')}
+                >
+                <Text style={styles.timeScaleText}>1h</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={timeScale === '3h' ? styles.selectedTimeScaleButton : styles.timeScaleButton}
+                onPress={() => changeTimeScale('3h')}
+                >
+                <Text style={styles.timeScaleText}>3h</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={timeScale === '1D' ? styles.selectedTimeScaleButton : styles.timeScaleButton}
+                onPress={() => changeTimeScale('1D')}
+                >
+                <Text style={styles.timeScaleText}>1D</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={timeScale === '1W' ? styles.selectedTimeScaleButton : styles.timeScaleButton}
+                onPress={() => changeTimeScale('1W')}
+                >
+                <Text style={styles.timeScaleText}>1W</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={changeChart} style={{width: 'auto', borderColor: 'orange', borderWidth: 1, borderRadius: 2, marginLeft: 5, marginRight: 2}}>
                 <AntDesign name={selectedChart === 'area' ? 'barschart' : 'linechart'} size={32} color='orange' />
               </TouchableOpacity>
             </View>
@@ -285,6 +318,14 @@ const styles = StyleSheet.create({
   timeScaleText: {
     textAlign: 'center',
     color: 'white'
+  },
+  selectedTimeScaleButton: {
+    width: 'auto',
+    flex: 1,
+    justifyContent: 'center',
+    borderBottomWidth: 3,
+    borderColor: 'orange',
+    // marginBottom: -3,
   }
 });
 
