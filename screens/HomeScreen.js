@@ -1,5 +1,5 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { useEffect, useState, useRef, forceUpdate } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -49,15 +49,20 @@ function AreaChart(timeScale) {
   const width = Dimensions.get('window').width;
   const height = Dimensions.get('window').height;
   const [areaChartJS, setAreaChartJS] = useState(chartJS.areaChart(width, timeScale.timeScale));
+  const [currTimeScale, setCurrTimeScale] = useState('1h');
 
   useEffect(() => {
-    console.log(timeScale.timeScale);
     setAreaChartJS(chartJS.areaChart(width, timeScale.timeScale));
-  }, [areaChartJS, timeScale]);
+    if (currTimeScale !== timeScale.timeScale) {
+      WebViewRef.reload();
+      setCurrTimeScale(timeScale.timeScale);
+    }
+  }, [timeScale]);
 
   return(
-    <View>
+    <View style={{flex: 1, height: 300}}>
       <WebView
+        ref={WVref => (WebViewRef = WVref)}
         originWhitelist={['*']}
         useWebKit={true}
         source={{ html: areaChartHtml }}
