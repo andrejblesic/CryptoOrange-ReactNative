@@ -7,17 +7,23 @@ import LinkScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 const WIDTH = Dimensions.get('window').width;
+const DrawerConfig = {
+  drawerWidth: WIDTH * 0.83
+};
 
-const DrawerNavigator = createDrawerNavigator({
-  Home: {
-    screen: HomeScreen
+const DrawerNavigator = createDrawerNavigator(
+  {
+    Home: {
+      screen: HomeScreen
+    },
+    Link: {
+      screen: LinkScreen
+    },
+    Settings: {
+      screen: SettingsScreen
+    }
   },
-  Link: {
-    screen: LinkScreen
-  },
-  Settings: {
-    screen: SettingsScreen
-  }
-});
+  DrawerConfig
+);
 
 export default createAppContainer(DrawerNavigator);

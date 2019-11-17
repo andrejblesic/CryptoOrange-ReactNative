@@ -18,7 +18,8 @@ import {
 import { MonoText } from '../components/StyledText';
 import * as chartJS from './chartJS.js';
 import { AntDesign, Zocial, Entypo } from '@expo/vector-icons';
-import DrawerNavigator from '../navigation/DrawerNavigator';
+import MenuButton from '../components/MenuButton';
+
 const coinbaseWS = 'wss://ws-feed.pro.coinbase.com';
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
 
@@ -155,6 +156,10 @@ export default function HomeScreen() {
         renderItem={({ item }) => <Text>{item.key}</Text>}
         ListHeaderComponent={
           <View>
+            <View>
+              <MenuButton />
+              {/* <MenuButton navigation={this.props.navigation} /> */}
+            </View>
             <View
               style={{
                 margin: 10,
