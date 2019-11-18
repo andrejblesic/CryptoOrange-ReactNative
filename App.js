@@ -22,6 +22,7 @@ export default function App(props) {
   } else {
     return (
       <View style={styles.container}>
+        <StatusBar backgroundColor="transparent" barStyle="light-content" />
         <DrawerNavigator />
       </View>
     );
@@ -56,7 +57,6 @@ function handleFinishLoading(setLoadingComplete) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: 'red'
+    flex: 1
   }
 });

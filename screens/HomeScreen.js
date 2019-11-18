@@ -94,7 +94,7 @@ function CandleChart(timeScale) {
   );
 }
 
-export default function HomeScreen() {
+export default function HomeScreen(navigation) {
   const [selectedChart, setChart] = useState('area');
   const [currencyPair, setPair] = useState('BTC-USD');
   const [socketOpened, setSocketOpened] = useState(false);
@@ -157,8 +157,7 @@ export default function HomeScreen() {
         ListHeaderComponent={
           <View>
             <View>
-              <MenuButton />
-              {/* <MenuButton navigation={this.props.navigation} /> */}
+              <MenuButton navigation={navigation} />
             </View>
             <View
               style={{
