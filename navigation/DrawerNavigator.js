@@ -8,7 +8,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 
 const WIDTH = Dimensions.get('window').width;
 const DrawerConfig = {
-  drawerWidth: WIDTH * 0.83
+  drawerWidth: WIDTH * 0.5
 };
 
 const DrawerNavigator = createDrawerNavigator(
