@@ -43,7 +43,6 @@ const candleChartHtml = `
 
 function AreaChart(timeScale) {
   const width = Dimensions.get('window').width;
-  const height = Dimensions.get('window').height;
   const [areaChartJS, setAreaChartJS] = useState(
     chartJS.areaChart(width, timeScale.timeScale)
   );
@@ -52,7 +51,7 @@ function AreaChart(timeScale) {
   useEffect(() => {
     setAreaChartJS(chartJS.areaChart(width, timeScale.timeScale));
     if (currTimeScale !== timeScale.timeScale) {
-      WebViewRef.reload();
+      AreaWebViewRef.reload();
       setCurrTimeScale(timeScale.timeScale);
     }
   }, [timeScale]);
@@ -60,7 +59,7 @@ function AreaChart(timeScale) {
   return (
     <View style={{ flex: 1, height: 300 }}>
       <WebView
-        ref={WVref => (WebViewRef = WVref)}
+        ref={AreaWVRef => (AreaWebViewRef = AreaWVRef)}
         originWhitelist={['*']}
         useWebKit={true}
         source={{ html: areaChartHtml }}
@@ -75,13 +74,23 @@ function AreaChart(timeScale) {
 
 function CandleChart(timeScale) {
   const width = Dimensions.get('window').width;
-  const height = Dimensions.get('window').height;
+  const [candleChartJS, setCandleChartJS] = useState(
+    chartJS.candleChart(width, timeScale.timeScale)
+  );
+  const [currTimeScale, setCurrTimeScale] = useState('1h');
 
-  const candleChartJS = chartJS.candleChart(width);
+  useEffect(() => {
+    setCandleChartJS(chartJS.candleChart(width, timeScale.timeScale));
+    if (currTimeScale !== timeScale.timeScale) {
+      CandleWebViewRef.reload();
+      setCurrTimeScale(timeScale.timeScale);
+    }
+  }, [timeScale]);
 
   return (
-    <View>
+    <View style={{ flex: 1, height: 300 }}>
       <WebView
+        ref={CandleWVref => (CandleWebViewRef = CandleWVref)}
         originWhitelist={['*']}
         useWebKit={true}
         source={{ html: candleChartHtml }}
@@ -95,7 +104,7 @@ function CandleChart(timeScale) {
 }
 
 export default function HomeScreen() {
-  const [selectedChart, setChart] = useState('area');
+  const [selectedChart, setChart] = useState('candle');
   const [currencyPair, setPair] = useState('BTC-USD');
   const [socketOpened, setSocketOpened] = useState(false);
   const [currPrice, setPrice] = useState(0);
@@ -155,7 +164,7 @@ export default function HomeScreen() {
       <FlatList
         renderItem={({ item }) => <Text>{item.key}</Text>}
         ListHeaderComponent={
-          <View>
+          <View hidden={true}>
             <View>
               <MenuButton />
               {/* <MenuButton navigation={this.props.navigation} /> */}
@@ -410,7 +419,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#343942',
-    marginTop: 0
+    marginTop: 50
   },
   contentBox: {
     backgroundColor: '#282c34',
@@ -436,7 +445,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderBottomWidth: 3,
     borderColor: 'orange'
-    // marginBottom: -3,
   }
 });
 
