@@ -1,9 +1,5 @@
 export function areaChart(width, timeScale) {
   return `
-  let color = '#282c34';
-  if ('${timeScale}' == '1W') {
-    color = 'white';
-  }
   const websocketUrl = 'ws://192.168.0.180:8000/charts';
   const areaWs = new WebSocket(websocketUrl);
   const chart = LightweightCharts.createChart(document.getElementById('areachartdiv'), { width: ${width}, height: 300 });
@@ -21,7 +17,7 @@ export function areaChart(width, timeScale) {
       secondsVisible: true,
     },
       layout: {
-        backgroundColor: color,
+        backgroundColor: '#282c34',
         textColor: '#696969',
         fontSize: 12,
         fontFamily: 'Calibri',
@@ -43,7 +39,31 @@ export function areaChart(width, timeScale) {
 
 export function candleChart(width, timeScale) {
   return `
-  const candlestickUrl = 'ws://192.168.0.180:8000/candela';
+  let candlestickUrl = '';
+  switch ('${timeScale}') {
+    case '1m':
+      candlestickUrl = 'ws://192.168.0.180:8000/candela';
+      break;
+    case '5m':
+      candlestickUrl = 'ws://192.168.0.180:8000/candela/5-minutes';
+      break;
+    case '15m':
+      candlestickUrl = 'ws://192.168.0.180:8000/candela/15-minutes';
+      break;
+    case '1h':
+      candlestickUrl = 'ws://192.168.0.180:8000/candela/1-hour';
+      break;
+    case '3h':
+      candlestickUrl = 'ws://192.168.0.180:8000/candela/3-hour';
+      break;
+    case '1D':
+      candlestickUrl = 'ws://192.168.0.180:8000/candela/1-day';
+      break;
+    case '1W':
+      candlestickUrl = 'ws://192.168.0.180:8000/candela/1-week';
+      break;
+  }
+  // const candlestickUrl = 'ws://192.168.0.180:8000/candela/1-hour';
   const candleWs = new WebSocket(candlestickUrl);
   const chart = LightweightCharts.createChart(document.getElementById('candlechartdiv'), { width: ${width}, height: 300 });
   const candlestickSeries = chart.addCandlestickSeries();
@@ -70,9 +90,13 @@ export function candleChart(width, timeScale) {
     candleWs.onmessage = event => {
       const chartData = JSON.parse(event.data).candela;
       if (chartData.length > 1) {
+        for (const item of chartData) {
+          item.time = parseInt(parseInt(item.time) / 1000);
+        }
         candlestickSeries.setData(chartData)
-      } else if (chartData.length >= 1) {
-        candlestickSeries.update(chartData)
+      } else if (!chartData.length) {
+        chartData.time = parseInt(parseInt(chartData.time) / 1000);
+        candlestickSeries.update(chartData);
       }
     };
   `;
