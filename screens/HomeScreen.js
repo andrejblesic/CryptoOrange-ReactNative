@@ -19,6 +19,7 @@ import { MonoText } from '../components/StyledText';
 import * as chartJS from './chartJS.js';
 import { AntDesign, Zocial, Entypo } from '@expo/vector-icons';
 import MenuButton from '../components/MenuButton';
+import { Ionicons } from '@expo/vector-icons';
 
 const coinbaseWS = 'wss://ws-feed.pro.coinbase.com';
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
@@ -103,7 +104,7 @@ function CandleChart(timeScale) {
   );
 }
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
   const [selectedChart, setChart] = useState('candle');
   const [currencyPair, setPair] = useState('BTC-USD');
   const [socketOpened, setSocketOpened] = useState(false);
@@ -162,78 +163,18 @@ export default function HomeScreen() {
   return (
     <ScrollView style={styles.container}>
       <FlatList
-        renderItem={({ item }) => <Text>{item.key}</Text>}
         ListHeaderComponent={
-          <View hidden={true}>
+          <View>
             <View>
-              <MenuButton />
-              {/* <MenuButton navigation={this.props.navigation} /> */}
-            </View>
-            <View
-              style={{
-                margin: 10,
-                flex: 1,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-            >
-              <Zocial
-                style={{ flex: 1 }}
-                name="bitcoin"
-                size={44}
-                color="orange"
+              <Ionicons
+                name="md-menu"
+                color="#ED7F2C"
+                size={32}
+                style={styles.menuIcon}
+                onPress={() => navigation.toggleDrawer()}
               />
-              <View
-                style={{
-                  flex: 2,
-                  alignItems: 'center',
-                  justifyContent: 'flex-end',
-                  flexDirection: 'row'
-                }}
-              >
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: 16,
-                    marginRight: 5,
-                    marginBottom: -6
-                  }}
-                >
-                  BTC-USD
-                </Text>
-                <Text
-                  style={{
-                    color:
-                      priceDrop === true
-                        ? 'red'
-                        : priceDrop === false
-                        ? 'green'
-                        : 'white',
-                    fontSize: 24
-                  }}
-                >
-                  {currPrice}
-                </Text>
-                <Entypo
-                  name={
-                    priceDrop === true
-                      ? 'triangle-down'
-                      : priceDrop === false
-                      ? 'triangle-up'
-                      : 'minus'
-                  }
-                  size={16}
-                  color={
-                    priceDrop === true
-                      ? 'red'
-                      : priceDrop === false
-                      ? 'green'
-                      : 'white'
-                  }
-                />
-              </View>
             </View>
+
             {selectedChart === 'area' ? (
               <AreaChart timeScale={timeScale} />
             ) : (
@@ -335,6 +276,71 @@ export default function HomeScreen() {
                   color="orange"
                 />
               </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                margin: 10,
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <Zocial
+                style={{ flex: 1 }}
+                name="bitcoin"
+                size={44}
+                color="orange"
+              />
+              <View
+                style={{
+                  flex: 2,
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  flexDirection: 'row'
+                }}
+              >
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 16,
+                    marginRight: 5,
+                    marginBottom: -6
+                  }}
+                >
+                  BTC-USD
+                </Text>
+                <Text
+                  style={{
+                    color:
+                      priceDrop === true
+                        ? 'red'
+                        : priceDrop === false
+                        ? 'green'
+                        : 'white',
+                    fontSize: 24
+                  }}
+                >
+                  {currPrice}
+                </Text>
+                <Entypo
+                  name={
+                    priceDrop === true
+                      ? 'triangle-down'
+                      : priceDrop === false
+                      ? 'triangle-up'
+                      : 'minus'
+                  }
+                  size={16}
+                  color={
+                    priceDrop === true
+                      ? 'red'
+                      : priceDrop === false
+                      ? 'green'
+                      : 'white'
+                  }
+                />
+              </View>
             </View>
           </View>
         }
@@ -445,6 +451,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderBottomWidth: 3,
     borderColor: 'orange'
+  },
+  menuIcon: {
+    zIndex: 9,
+    position: 'absolute',
+    top: 40,
+    left: 20
   }
 });
 
