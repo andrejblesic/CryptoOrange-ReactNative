@@ -22,6 +22,7 @@ export default function App(props) {
   } else {
     return (
       <View style={styles.container}>
+        <StatusBar backgroundColor="transparent" barStyle="light-content" />
         <DrawerNavigator />
       </View>
     );

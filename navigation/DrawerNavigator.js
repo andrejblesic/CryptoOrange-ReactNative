@@ -8,7 +8,13 @@ import SettingsScreen from '../screens/SettingsScreen';
 
 const WIDTH = Dimensions.get('window').width;
 const DrawerConfig = {
-  drawerWidth: WIDTH * 0.5
+  drawerWidth: WIDTH * 0.83,
+  drawerBackgroundColor: '#282c34',
+  edgeWidth: 50,
+  contentOptions: {
+    activeTintColor: 'orange',
+    inactiveTintColor: 'white'
+  }
 };
 
 const DrawerNavigator = createDrawerNavigator(
