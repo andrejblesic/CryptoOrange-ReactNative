@@ -1,6 +1,6 @@
 export function areaChart(width, timeScale) {
   return `
-  const websocketUrl = 'ws://192.168.0.180:8000/charts';
+  const websocketUrl = 'ws://192.168.0.11:8000/charts';
   const areaWs = new WebSocket(websocketUrl);
   const chart = LightweightCharts.createChart(document.getElementById('areachartdiv'), { width: ${width}, height: 300 });
   const areaSeries = chart.addAreaSeries();
@@ -42,28 +42,28 @@ export function candleChart(width, timeScale) {
   let candlestickUrl = '';
   switch ('${timeScale}') {
     case '1m':
-      candlestickUrl = 'ws://192.168.0.180:8000/candela';
+      candlestickUrl = 'ws://192.168.0.11:8000/candela';
       break;
     case '5m':
-      candlestickUrl = 'ws://192.168.0.180:8000/candela/5-minutes';
+      candlestickUrl = 'ws://192.168.0.11:8000/candela/5-minutes';
       break;
     case '15m':
-      candlestickUrl = 'ws://192.168.0.180:8000/candela/15-minutes';
+      candlestickUrl = 'ws://192.168.0.11:8000/candela/15-minutes';
       break;
     case '1h':
-      candlestickUrl = 'ws://192.168.0.180:8000/candela/1-hour';
+      candlestickUrl = 'ws://192.168.0.11:8000/candela/1-hour';
       break;
     case '3h':
-      candlestickUrl = 'ws://192.168.0.180:8000/candela/3-hour';
+      candlestickUrl = 'ws://192.168.0.11:8000/candela/3-hour';
       break;
     case '1D':
-      candlestickUrl = 'ws://192.168.0.180:8000/candela/1-day';
+      candlestickUrl = 'ws://192.168.0.11:8000/candela/1-day';
       break;
     case '1W':
-      candlestickUrl = 'ws://192.168.0.180:8000/candela/1-week';
+      candlestickUrl = 'ws://192.168.0.11:8000/candela/1-week';
       break;
   }
-  // const candlestickUrl = 'ws://192.168.0.180:8000/candela/1-hour';
+  // const candlestickUrl = 'ws://192.168.0.11:8000/candela/1-hour';
   const candleWs = new WebSocket(candlestickUrl);
   const chart = LightweightCharts.createChart(document.getElementById('candlechartdiv'), { width: ${width}, height: 300 });
   const candlestickSeries = chart.addCandlestickSeries();
