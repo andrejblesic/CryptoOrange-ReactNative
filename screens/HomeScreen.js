@@ -7,20 +7,21 @@ import {
   View,
   FlatList,
   TextInput,
-  Image
+  Image,
+  Easing,
+  Animated
 } from 'react-native';
 import { WebView, Dimensions, TouchableOpacity } from 'react-native';
 import {
   Button,
   ThemeProvider,
-  SearchBar
 } from 'react-native-elements';
 import { MonoText } from '../components/StyledText';
 import * as chartJS from './chartJS.js';
-import { AntDesign, Zocial, Entypo, Feather } from '@expo/vector-icons';
-// import MenuButton from '../components/MenuButton';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, AntDesign, Zocial, Entypo, Feather, FontAwesome } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 
+const statusBarHeight = Constants.statusBarHeight;
 const coinbaseWS = 'wss://ws-feed.pro.coinbase.com';
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
 
@@ -49,6 +50,8 @@ function AreaChart(timeScale) {
   );
   const [currTimeScale, setCurrTimeScale] = useState('1h');
 
+  // console.log(Constants.statusBarHeight);
+
   useEffect(() => {
     setAreaChartJS(chartJS.areaChart(width, timeScale.timeScale));
     if (currTimeScale !== timeScale.timeScale) {
@@ -58,7 +61,7 @@ function AreaChart(timeScale) {
   }, [timeScale]);
 
   return (
-    <View style={{ flex: 1, height: 300 }}>
+    <View style={{ flex: 1, height: 300,zIndex: -1 }}>
       <WebView
         ref={AreaWVRef => (AreaWebViewRef = AreaWVRef)}
         originWhitelist={['*']}
@@ -89,7 +92,7 @@ function CandleChart(timeScale) {
   }, [timeScale]);
 
   return (
-    <View style={{ flex: 1, height: 300 }}>
+    <View style={{ flex: 1, height: 300, zIndex: -1 }}>
       <WebView
         ref={CandleWVref => (CandleWebViewRef = CandleWVref)}
         originWhitelist={['*']}
@@ -104,7 +107,8 @@ function CandleChart(timeScale) {
   );
 }
 
-function Header({navigation}) {
+function Header({navigation, toggleUserDrawer, userDrawerOpen}) {
+
   return(
     <View style={{backgroundColor: '#1e222a', flex: 1, height: 60, width: '100%', flexDirection: 'row', justifyContent: 'center', boxShadow: '10px 10px 10px rgba(0,0,0,1)'}}>
       <Ionicons
@@ -115,11 +119,66 @@ function Header({navigation}) {
         onPress={() => navigation.toggleDrawer()}
       />
       <Image
-        style={{width: 40, height: 40, position: 'absolute', zIndex: 99999, top: 8}}
+        style={{width: 40, height: 40, position: 'absolute', zIndex: 8, top: 8}}
         source={require('./CO.png')}
       />
-      <Feather color="#ED7F2C" style={{position: 'absolute', zIndex: 99999, top: 13, right: 8}} size={32} name='user' />
+      <TouchableOpacity onPress={() => toggleUserDrawer()} style={{position: 'absolute', zIndex: 99999, top: 13, right: 8}}>
+        <Feather color="#ED7F2C" size={32} name='user' />
+      </TouchableOpacity>
     </View>
+  );
+}
+
+function UserDrawer({userDrawerOpen, toggleUserDrawer}) {
+
+  const [xPosition] = useState(new Animated.Value(-300));
+  const [drawerOut, setDrawerOut] = useState(false);
+
+  const statusBarHeight = Constants.statusBarHeight;
+  const height = Dimensions.get('window').height + statusBarHeight;
+  const width = Dimensions.get('window').width;
+
+
+  useEffect(() => {
+    toggleDrawer();
+  }, [userDrawerOpen]);
+
+  const toggleDrawer = () => {
+    if (userDrawerOpen) {
+      Animated.timing(
+        xPosition,
+        {
+          toValue: 0,
+          duration: 200,
+        }
+      ).start();
+    } else {
+      Animated.timing(
+        xPosition,
+        {
+          toValue: -300,
+          duration: 200,
+        }
+      ).start();
+    }
+  }
+
+  return(
+    <Animated.View style={{flex: 1, justifyContent: 'flex-start', zIndex: 99999, height: height, width: 300, backgroundColor: '#282c34', position: 'absolute', right: xPosition}}>
+      <View style={{flex: 1, flexDirection: 'column', height: '100%', zIndex: 9999, height: '100%', marginTop: statusBarHeight}}>
+        <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+          <TouchableOpacity onPress={toggleUserDrawer}>
+            <Ionicons style={{marginRight: 15, marginTop: 10}} size={32} name='md-close' color='#ED7F2C' />
+          </TouchableOpacity>
+        </View>
+        <View style={{flex: 1, backgroundColor: '', justifyContent: 'flex-start', alignItems: 'center'}}>
+          <View style={{marginTop: 19, borderWidth: 1, borderStyle: 'dashed', borderRadius: 8}}>
+            <Entypo name='user' size={220} />
+          </View>
+
+        </View>
+      </View>
+    </Animated.View>
   );
 }
 
@@ -130,8 +189,17 @@ export default function HomeScreen({navigation}) {
   const [currPrice, setPrice] = useState(0);
   const [priceDrop, setDrop] = useState(null);
   const [timeScale, setTimeScale] = useState('1h');
+  const [userDrawerOpen, setUserDrawerOpen] = useState(false);
 
   let currentPrice = 0;
+
+  const toggleUserDrawer = () => {
+    if (userDrawerOpen) {
+      setUserDrawerOpen(false);
+    } else {
+      setUserDrawerOpen(true);
+    }
+  }
 
   useEffect(() => {
     if (!socketOpened) {
@@ -180,10 +248,73 @@ export default function HomeScreen({navigation}) {
   };
 
   return (
-    <ScrollView style={styles.container}
+    <>
+    <ScrollView pointerEvents={'box-none'} scrollEnabled={!userDrawerOpen} style={styles.container}
       stickyHeaderIndices={[0]}
     >
-      <Header navigation={navigation} />
+      {userDrawerOpen ? <TouchableOpacity onPress={toggleUserDrawer} activeOpacity={1} style={{backgroundColor: 'rgba(0,0,0, 0.5)', height: '100%', width: '100%', position: 'absolute'}}></TouchableOpacity> : null}
+      <Header userDrawerOpen={userDrawerOpen} toggleUserDrawer={toggleUserDrawer} navigation={navigation} />
+      <TouchableOpacity
+        activeOpacity={0.5}
+        style={{
+          margin: 10,
+          marginTop: 3,
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Zocial
+          style={{ flex: 1}}
+          name="bitcoin"
+          size={48}
+          color="#ED7F2C"
+        />
+        <View
+          style={{
+            flex: 2,
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            flexDirection: 'row'
+          }}
+        >
+          <Text
+            style={{
+              color: 'white',
+              fontSize: 14,
+              marginRight: 5,
+              marginBottom: -10
+            }}
+          >
+            BTC-USD
+          </Text>
+          <Text
+            style={{
+              color:
+                priceDrop === true
+                  ? 'red'
+                  : 'green',
+              fontSize: 32
+            }}
+          >
+            {currPrice}
+          </Text>
+          <Entypo
+            name={
+              priceDrop === true
+                ? 'triangle-down'
+                : 'triangle-up'
+            }
+            size={24}
+            color={
+              priceDrop === true
+                ? 'red'
+                : 'green'
+            }
+          />
+        </View>
+      </TouchableOpacity>
       {selectedChart === 'area' ? <AreaChart timeScale={timeScale} /> : <CandleChart timeScale={timeScale} />}
       <View
         style={{
@@ -268,7 +399,7 @@ export default function HomeScreen({navigation}) {
           onPress={changeChart}
           style={{
             width: 'auto',
-            borderColor: 'orange',
+            borderColor: '#ED7F2C',
             borderWidth: 1,
             borderRadius: 2,
             marginLeft: 5,
@@ -278,73 +409,11 @@ export default function HomeScreen({navigation}) {
           <AntDesign
             name={selectedChart === 'area' ? 'barschart' : 'linechart'}
             size={32}
-            color="orange"
+            color="#ED7F2C"
           />
         </TouchableOpacity>
       </View>
       <View style={{margin: 0, height: 1, width: '100%', backgroundColor: 'rgb(45, 45, 45)'}}></View>
-      <TouchableOpacity
-        activeOpacity={0.5}
-        style={{
-          margin: 10,
-          marginTop: 3,
-          flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
-      >
-        <Zocial
-          style={{ flex: 1}}
-          name="bitcoin"
-          size={48}
-          color="orange"
-        />
-        <View
-          style={{
-            flex: 2,
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            flexDirection: 'row'
-          }}
-        >
-          <Text
-            style={{
-              color: 'white',
-              fontSize: 14,
-              marginRight: 5,
-              marginBottom: -10
-            }}
-          >
-            BTC-USD
-          </Text>
-          <Text
-            style={{
-              color:
-                priceDrop === true
-                  ? 'red'
-                  : 'green',
-              fontSize: 32
-            }}
-          >
-            {currPrice}
-          </Text>
-          <Entypo
-            name={
-              priceDrop === true
-                ? 'triangle-down'
-                : 'triangle-up'
-            }
-            size={24}
-            color={
-              priceDrop === true
-                ? 'red'
-                : 'green'
-            }
-          />
-        </View>
-      </TouchableOpacity>
-
       <View style={styles.contentBox}>
         <Text>test1</Text>
         <Text>test1</Text>
@@ -371,6 +440,8 @@ export default function HomeScreen({navigation}) {
         <Text>test2</Text>
       </View>
     </ScrollView>
+    <UserDrawer toggleUserDrawer={toggleUserDrawer} userDrawerOpen={userDrawerOpen} />
+    </>
   );
 }
 
@@ -429,7 +500,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#343942',
-    marginTop: 31
+    marginTop: statusBarHeight,
+    zIndex: -1
   },
   contentBox: {
     backgroundColor: '#282c34',
@@ -454,7 +526,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     borderBottomWidth: 3,
-    borderColor: 'orange'
+    borderColor: '#ED7F2C'
   },
   menuIcon: {
     zIndex: 9,

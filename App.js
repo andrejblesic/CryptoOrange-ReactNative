@@ -2,11 +2,12 @@ import { AppLoading } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import React, { useState } from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, Dimensions, Text, Animated, Easing, Button } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 // import { createChart } from 'lightweight-charts';
 import DrawerNavigator from './navigation/DrawerNavigator';
 //import AppNavigator from './navigation/AppNavigator';
+import Constants from 'expo-constants';
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
@@ -22,7 +23,7 @@ export default function App(props) {
   } else {
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor="transparent" barStyle="light-content" />
+        <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />
         <DrawerNavigator />
       </View>
     );
