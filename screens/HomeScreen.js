@@ -15,14 +15,7 @@ import { WebView, Dimensions, TouchableOpacity } from 'react-native';
 import { Button, ThemeProvider } from 'react-native-elements';
 import { MonoText } from '../components/StyledText';
 import * as chartJS from './chartJS.js';
-import {
-  Ionicons,
-  AntDesign,
-  Zocial,
-  Entypo,
-  Feather,
-  FontAwesome
-} from '@expo/vector-icons';
+import { Ionicons, AntDesign, Zocial, MaterialCommunityIcons, Entypo, Feather, FontAwesome } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 
 const statusBarHeight = Constants.statusBarHeight;
@@ -86,11 +79,13 @@ function CandleChart(timeScale) {
     chartJS.candleChart(width, timeScale.timeScale)
   );
   const [currTimeScale, setCurrTimeScale] = useState('1h');
+  const [isReloadWebView, setReloadWebView] = useState(false);
 
   useEffect(() => {
     setCandleChartJS(chartJS.candleChart(width, timeScale.timeScale));
     if (currTimeScale !== timeScale.timeScale) {
-      CandleWebViewRef.reload();
+      // CandleWebViewRef.reload();
+      setReloadWebView(!isReloadWebView);
       setCurrTimeScale(timeScale.timeScale);
     }
   }, [timeScale]);
@@ -99,6 +94,7 @@ function CandleChart(timeScale) {
     <View style={{ flex: 1, height: 300, zIndex: -1 }}>
       <WebView
         ref={CandleWVref => (CandleWebViewRef = CandleWVref)}
+        key={isReloadWebView}
         originWhitelist={['*']}
         useWebKit={true}
         source={{ html: candleChartHtml }}
@@ -202,31 +198,29 @@ function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
       >
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           <TouchableOpacity onPress={toggleUserDrawer}>
-            <Ionicons
-              style={{ marginRight: 15, marginTop: 10 }}
-              size={32}
-              name="md-close"
-              color="#ED7F2C"
-            />
+            <Ionicons style={{marginRight: 15, marginTop: 11, marginBottom: 5}} size={32} name='md-close' color='#ED7F2C' />
           </TouchableOpacity>
         </View>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: '',
-            justifyContent: 'flex-start',
-            alignItems: 'center'
-          }}
-        >
-          <View
-            style={{
-              marginTop: 19,
-              borderWidth: 1,
-              borderStyle: 'dashed',
-              borderRadius: 8
-            }}
-          >
-            <Entypo name="user" size={220} />
+        <View style={{height: 1, backgroundColor: 'black', width: '100%', marginTop: 10}}></View>
+        <View style={{flex: 1, backgroundColor: '', justifyContent: 'flex-start', alignItems: 'center'}}>
+          <View style={{marginTop: 19, borderWidth: 1, borderColor: '#ED7F2C',borderStyle: 'dashed', borderRadius: 8}}>
+            <Entypo name='user' size={220} />
+          </View>
+          <Text style={{color: '#ED7F2C', fontSize: 20, margin: 15}}>Maximilian Schwarzmüller</Text>
+          <View style={{height: 1, backgroundColor: 'black', width: '100%'}}></View>
+          <View style={{marginTop: 12}}>
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+              <MaterialCommunityIcons name='bitcoin' size={18} color="#ED7F2C" />
+              <Text style={{textAlign: 'left', fontSize: 16, color: '#ED7F2C'}}> BTC: 3.55643467</Text>
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+              <MaterialCommunityIcons name='ethereum' size={18} color="#ED7F2C" />
+              <Text style={{textAlign: 'left', fontSize: 16, color: '#ED7F2C'}}> ETH: 14.89481646</Text>
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+              <MaterialCommunityIcons name='litecoin' size={18} color="#ED7F2C" />
+              <Text style={{textAlign: 'left', fontSize: 16, color: '#ED7F2C'}}> LTC: 29.01663115</Text>
+            </View>
           </View>
         </View>
       </View>
@@ -301,11 +295,22 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <>
-      <ScrollView
-        pointerEvents={'box-none'}
-        scrollEnabled={!userDrawerOpen}
-        style={styles.container}
-        stickyHeaderIndices={[0]}
+    <ScrollView pointerEvents={'box-none'} scrollEnabled={!userDrawerOpen} style={styles.container}
+      stickyHeaderIndices={[0]}
+    >
+      {userDrawerOpen ? <TouchableOpacity onPress={toggleUserDrawer} activeOpacity={1} style={{backgroundColor: 'rgba(0,0,0, 0.5)', height: '100%', width: '100%', position: 'absolute'}}></TouchableOpacity> : null}
+      <Header userDrawerOpen={userDrawerOpen} toggleUserDrawer={toggleUserDrawer} navigation={navigation} />
+      <TouchableOpacity
+        activeOpacity={0.5}
+        style={{
+          margin: 10,
+          marginTop: 3,
+          marginLeft: 15,
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
       >
         {userDrawerOpen ? (
           <TouchableOpacity
@@ -476,7 +481,91 @@ export default function HomeScreen({ navigation }) {
             />
           </TouchableOpacity>
         </View>
-        <View
+      </TouchableOpacity>
+      {selectedChart === 'area' ? <AreaChart timeScale={timeScale} /> : <CandleChart timeScale={timeScale} />}
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginTop: 5,
+          marginBottom: 5
+        }}
+      >
+        {selectedChart === 'candle' ? <View style={{flex: 1, flexDirection: 'row'}}>
+          <TouchableOpacity
+            style={
+              timeScale === '1m'
+                ? styles.selectedTimeScaleButton
+                : styles.timeScaleButton
+            }
+            onPress={() => changeTimeScale('1m')}
+          >
+            <Text style={styles.timeScaleText}>1m</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={
+              timeScale === '5m'
+                ? styles.selectedTimeScaleButton
+                : styles.timeScaleButton
+            }
+            onPress={() => changeTimeScale('5m')}
+          >
+            <Text style={styles.timeScaleText}>5m</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={
+              timeScale === '15m'
+                ? styles.selectedTimeScaleButton
+                : styles.timeScaleButton
+            }
+            onPress={() => changeTimeScale('15m')}
+          >
+            <Text style={styles.timeScaleText}>15m</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={
+              timeScale === '1h'
+                ? styles.selectedTimeScaleButton
+                : styles.timeScaleButton
+            }
+            onPress={() => changeTimeScale('1h')}
+          >
+            <Text style={styles.timeScaleText}>1h</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={
+              timeScale === '3h'
+                ? styles.selectedTimeScaleButton
+                : styles.timeScaleButton
+            }
+            onPress={() => changeTimeScale('3h')}
+          >
+            <Text style={styles.timeScaleText}>3h</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={
+              timeScale === '1D'
+                ? styles.selectedTimeScaleButton
+                : styles.timeScaleButton
+            }
+            onPress={() => changeTimeScale('1D')}
+          >
+            <Text style={styles.timeScaleText}>1D</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={
+              timeScale === '1W'
+                ? styles.selectedTimeScaleButton
+                : styles.timeScaleButton
+            }
+            onPress={() => changeTimeScale('1W')}
+          >
+            <Text style={styles.timeScaleText}>1W</Text>
+          </TouchableOpacity>
+        </View> :null}
+        <TouchableOpacity
+          onPress={changeChart}
           style={{
             margin: 0,
             height: 1,

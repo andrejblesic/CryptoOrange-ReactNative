@@ -40,6 +40,7 @@ export function areaChart(width, timeScale) {
 export function candleChart(width, timeScale) {
   return `
   let candlestickUrl = '';
+  let color = 'white';
   switch ('${timeScale}') {
     case '1m':
       candlestickUrl = 'ws://192.168.0.179:8000/candela';
@@ -61,6 +62,8 @@ export function candleChart(width, timeScale) {
       break;
     case '1W':
       candlestickUrl = 'ws://192.168.0.179:8000/candela/1-week';
+      break;
+    default:
       break;
   }
   // const candlestickUrl = 'ws://192.168.0.11:8000/candela/1-hour';
