@@ -7,6 +7,11 @@ import {
   Entypo,
   Feather
 } from '@expo/vector-icons';
+import Constants from 'expo-constants';
+import { UserDrawer } from './HomeScreen';
+// import { Header } from './HomeScreen';
+
+const statusBarHeight = Constants.statusBarHeight;
 
 function Header({ navigation }) {
   return (
@@ -47,27 +52,33 @@ function Header({ navigation }) {
     </View>
   );
 }
+
 export default function LinksScreen({ navigation }) {
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      style={styles.container}
-      stickyHeaderIndices={[0]}
-    >
-      <Header style={styles.header} navigation={navigation} />
-    </ScrollView>
+    <>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={styles.container}
+        stickyHeaderIndices={[0]}
+      >
+        <Header style={styles.header} navigation={navigation} />
+      </ScrollView>
+      <View style={styles.bottomView}>
+        <Text style={styles.textStyle}>DEMO</Text>
+      </View>
+    </>
   );
 }
 
 LinksScreen.navigationOptions = {
-  title: 'DEMO 2'
+  title: 'DEMO'
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#343942',
-    marginTop: 28
+    marginTop: statusBarHeight
   },
   menuIcon: {
     zIndex: 9,
@@ -75,5 +86,17 @@ const styles = StyleSheet.create({
     top: 13,
     left: 16
   },
-  header: {}
+  bottomView: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#EE5407',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 0
+  },
+  textStyle: {
+    color: '#fff',
+    fontSize: 18
+  }
 });

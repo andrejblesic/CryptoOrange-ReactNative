@@ -25,9 +25,6 @@ const DrawerNavigator = createDrawerNavigator(
     Link: {
       screen: LinkScreen
     },
-    Settings: {
-      screen: SettingsScreen
-    }
   },
   DrawerConfig
 );

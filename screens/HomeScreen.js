@@ -115,7 +115,7 @@ function CandleChart(timeScale) {
   );
 }
 
-function Header({ navigation, toggleUserDrawer, userDrawerOpen }) {
+export function Header({ navigation, toggleUserDrawer, userDrawerOpen }) {
   return (
     <View
       style={{
@@ -155,7 +155,7 @@ function Header({ navigation, toggleUserDrawer, userDrawerOpen }) {
   );
 }
 
-function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
+export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
   const [xPosition] = useState(new Animated.Value(-300));
   const [drawerOut, setDrawerOut] = useState(false);
 
@@ -207,7 +207,7 @@ function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           <TouchableOpacity onPress={toggleUserDrawer}>
             <Ionicons
-              style={{ marginRight: 15, marginTop: 11, marginBottom: 5 }}
+              style={{ marginRight: 15, marginTop: 14, marginBottom: 2 }}
               size={32}
               name="md-close"
               color="#ED7F2C"
@@ -450,7 +450,7 @@ export default function HomeScreen({ navigation }) {
           style={{
             flex: 1,
             flexDirection: 'row',
-            justifyContent: 'space-between',
+            justifyContent: selectedChart === 'candle' ? 'space-between' : 'flex-end',
             marginTop: 5,
             marginBottom: 5
           }}
@@ -555,36 +555,18 @@ export default function HomeScreen({ navigation }) {
             backgroundColor: 'rgb(45, 45, 45)'
           }}
         ></View>
-        <View style={styles.contentBox}>
-          <Text>test1</Text>
-          <Text>test1</Text>
-          <Text>test1</Text>
-        </View>
-        <View style={styles.contentBox}>
-          <Text>test1</Text>
-          <Text>test1</Text>
-          <Text>test1</Text>
-        </View>
-        <View style={styles.contentBox}>
-          <Text>test2</Text>
-          <Text>test2</Text>
-          <Text>test2</Text>
-        </View>
-        <View style={styles.contentBox}>
-          <Text>test1</Text>
-          <Text>test1</Text>
-          <Text>test1</Text>
-        </View>
-        <View style={styles.contentBox}>
-          <Text>test1</Text>
-          <Text>test1</Text>
-          <Text>test1</Text>
-        </View>
-        <View style={styles.contentBox}>
-          <Text>test1</Text>
-          <Text>test1</Text>
-          <Text>test1</Text>
-        </View>
+        <TouchableOpacity style={styles.contentBox}>
+          <Text style={styles.testText}>Demo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.contentBox}>
+          <Text style={styles.testText}>Demo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.contentBox}>
+          <Text style={styles.testText}>Demo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.contentBox}>
+          <Text style={styles.testText}>Demo</Text>
+        </TouchableOpacity>
       </ScrollView>
       <View style={styles.bottomView}>
         <Text style={styles.textStyle}>DEMO</Text>
@@ -653,17 +635,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#30343D',
     marginTop: statusBarHeight,
+    marginBottom: 50,
     zIndex: -1
   },
   contentBox: {
     backgroundColor: '#282C34',
     flex: 1,
+    justifyContent: 'center',
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderTopColor: '#21252B',
     borderBottomColor: '#21252B',
     marginBottom: 3,
-    height: 70
+    height: 80
+  },
+  testText: {
+    textAlign: 'center',
+    fontSize: 20,
+    color: '#30343D'
   },
   timeScaleButton: {
     width: 'auto',
