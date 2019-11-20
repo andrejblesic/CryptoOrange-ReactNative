@@ -578,12 +578,12 @@ function handleHelpPress() {
 const styles = StyleSheet.create({
   WebViewStyle: {
     flex: 2,
-    backgroundColor: '#3f444d',
+    backgroundColor: '#30343d',
     height: 300
   },
   container: {
     flex: 1,
-    backgroundColor: '#343942',
+    backgroundColor: '#30343d',
     marginTop: statusBarHeight,
     zIndex: -1
   },
@@ -592,9 +592,10 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderTopColor: 'black',
-    borderBottomColor: 'black',
-    marginBottom: 10
+    borderTopColor: '#21252b',
+    borderBottomColor: '#21252b',
+    marginBottom: 3,
+    height: 70
   },
   timeScaleButton: {
     width: 'auto',
