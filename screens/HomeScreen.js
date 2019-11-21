@@ -585,7 +585,8 @@ export default function HomeScreen({ navigation }) {
 
 function Overlay({userDrawerOpen, toggleUserDrawer}) {
 
-  const [right] = useState(new Animated.Value(0))
+  const [right] = useState(new Animated.Value(0));
+  const [opacity] = useState(new Animated.Value(0));
 
   const AnimatedOverlay = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -599,10 +600,18 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
         toValue: 300,
         duration: 305
       }).start();
+      Animated.timing(opacity, {
+        toValue: 0.8,
+        duration: 300,
+      }).start();
     } else {
       Animated.timing(right, {
         toValue: 0,
         duration: 305
+      }).start();
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 0,
       }).start();
     }
   }, [userDrawerOpen]);
@@ -612,8 +621,9 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
       {userDrawerOpen ?
         <AnimatedOverlay
           onPress={toggleUserDrawer}
-          activeOpacity={1}
+          activeOpacity={0.8}
           style={{
+            opacity: opacity,
             backgroundColor: 'rgba(0,0,0, 0.75)',
             height: '100%',
             width: '100%',
