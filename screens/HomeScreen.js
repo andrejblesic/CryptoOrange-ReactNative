@@ -600,7 +600,6 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
       Animated.timing(opacity, {
         toValue: 0.8,
         duration: 300,
-        useNativeDriver: true
       }).start();
     } else {
       Animated.timing(right, {
@@ -610,7 +609,6 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
       Animated.timing(opacity, {
         toValue: 0,
         duration: 0,
-        useNativeDriver: true
       }).start();
     }
   }, [userDrawerOpen]);
