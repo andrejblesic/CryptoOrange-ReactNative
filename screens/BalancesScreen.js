@@ -1,5 +1,12 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View, Text, Image } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity
+} from 'react-native';
 import { Ionicons, MaterialIcons, Feather } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { UserDrawer } from './HomeScreen';
@@ -47,7 +54,7 @@ function Header({ navigation }) {
   );
 }
 
-export default function LinksScreen({ navigation }) {
+export default function BalancesScreen({ navigation }) {
   return (
     <>
       <ScrollView
@@ -58,13 +65,15 @@ export default function LinksScreen({ navigation }) {
         <Header style={styles.header} navigation={navigation} />
       </ScrollView>
       <View style={styles.bottomView}>
-        <Text style={styles.textStyle}>DEMO</Text>
+        <TouchableOpacity style={styles.bottomView}>
+          <Text style={styles.textStyle}>BUY / SELL</Text>
+        </TouchableOpacity>
       </View>
     </>
   );
 }
 
-LinksScreen.navigationOptions = {
+BalancesScreen.navigationOptions = {
   title: 'ACCOUNT BALANCES',
   drawerIcon: (
     <MaterialIcons
