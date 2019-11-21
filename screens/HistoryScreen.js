@@ -1,6 +1,11 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Text, Image } from 'react-native';
-import { Ionicons, Feather, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, Feather } from '@expo/vector-icons';
+import Constants from 'expo-constants';
+import { UserDrawer } from './HomeScreen';
+// import { Header } from './HomeScreen';
+
+const statusBarHeight = Constants.statusBarHeight;
 
 function Header({ navigation }) {
   return (
@@ -41,23 +46,41 @@ function Header({ navigation }) {
     </View>
   );
 }
-export default function SettingsScreen({ navigation }) {
+
+export default function HistoryScreen({ navigation }) {
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      style={styles.container}
-      stickyHeaderIndices={[0]}
-    >
-      <Header style={styles.header} navigation={navigation} />
-    </ScrollView>
+    <>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={styles.container}
+        stickyHeaderIndices={[0]}
+      >
+        <Header style={styles.header} navigation={navigation} />
+      </ScrollView>
+      <View style={styles.bottomView}>
+        <Text style={styles.textStyle}>DEMO</Text>
+      </View>
+    </>
   );
 }
+
+HistoryScreen.navigationOptions = {
+  title: 'ALL HISTORY',
+  drawerIcon: (
+    <MaterialIcons
+      style={{ color: '#ED7F2C', marginRight: -8 }}
+      name="history"
+      color="#ED7F2C"
+      size={32}
+    />
+  )
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#343942',
-    marginTop: 28
+    marginTop: statusBarHeight
   },
   menuIcon: {
     zIndex: 9,
@@ -65,16 +88,17 @@ const styles = StyleSheet.create({
     top: 13,
     left: 16
   },
-  header: {}
+  bottomView: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#EE5407',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 0
+  },
+  textStyle: {
+    color: '#fff',
+    fontSize: 18
+  }
 });
-SettingsScreen.navigationOptions = {
-  title: 'BUY / SELL CRYPTO',
-  drawerIcon: (
-    <MaterialIcons
-      style={{ color: '#ED7F2C', marginRight: -8 }}
-      name="compare-arrows"
-      color="#ED7F2C"
-      size={32}
-    />
-  )
-};

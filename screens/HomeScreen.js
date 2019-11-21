@@ -22,7 +22,7 @@ import {
   MaterialCommunityIcons,
   Entypo,
   Feather,
-  FontAwesome
+  MaterialIcons
 } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 
@@ -437,7 +437,8 @@ export default function HomeScreen({ navigation }) {
           style={{
             flex: 1,
             flexDirection: 'row',
-            justifyContent: selectedChart === 'candle' ? 'space-between' : 'flex-end',
+            justifyContent:
+              selectedChart === 'candle' ? 'space-between' : 'flex-end',
             marginTop: 5,
             marginBottom: 5
           }}
@@ -556,7 +557,9 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </ScrollView>
       <View style={styles.bottomView}>
-        <Text style={styles.textStyle}>DEMO</Text>
+        <TouchableOpacity style={styles.bottomView}>
+          <Text style={styles.textStyle}>BUY / SELL</Text>
+        </TouchableOpacity>
       </View>
       <UserDrawer
         toggleUserDrawer={toggleUserDrawer}
@@ -625,7 +628,15 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
 }
 
 HomeScreen.navigationOptions = {
-  title: 'Home',
+  title: 'HOME',
+  drawerIcon: (
+    <MaterialIcons
+      style={{ color: '#ED7F2C', marginRight: -8 }}
+      name="home"
+      color="#ED7F2C"
+      size={32}
+    />
+  ),
   headerStyle: {
     backgroundColor: '#282c34'
   },
@@ -729,6 +740,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     bottom: 0
+  },
+  bottomViewTouchable: {
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   textStyle: {
     color: '#fff',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Text, Image } from 'react-native';
-import { Ionicons, MaterialIcons, Feather } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { UserDrawer } from './HomeScreen';
 // import { Header } from './HomeScreen';
@@ -47,7 +47,7 @@ function Header({ navigation }) {
   );
 }
 
-export default function LinksScreen({ navigation }) {
+export default function DepositScreen({ navigation }) {
   return (
     <>
       <ScrollView
@@ -64,12 +64,12 @@ export default function LinksScreen({ navigation }) {
   );
 }
 
-LinksScreen.navigationOptions = {
-  title: 'ACCOUNT BALANCES',
+DepositScreen.navigationOptions = {
+  title: 'DEPOSIT',
   drawerIcon: (
-    <MaterialIcons
+    <MaterialCommunityIcons
       style={{ color: '#ED7F2C', marginRight: -8 }}
-      name="account-balance-wallet"
+      name="arrow-up-bold-box-outline"
       color="#ED7F2C"
       size={32}
     />
