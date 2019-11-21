@@ -7,8 +7,8 @@ import {
 } from 'react-navigation';
 
 import HomeScreen from '../screens/HomeScreen';
-import LinkScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import BalancesScreen from '../screens/BalancesScreen';
+import BuySellScreen from '../screens/BuySellScreen';
 import DepositScreen from '../screens/DepositScreen';
 import WithdrawScreen from '../screens/WithdrawScreen';
 import HistoryScreen from '../screens/HistoryScreen';
@@ -33,10 +33,10 @@ const DrawerNavigator = createDrawerNavigator(
       screen: HomeScreen
     },
     Balances: {
-      screen: LinkScreen
+      screen: BalancesScreen
     },
     BuySell: {
-      screen: SettingsScreen
+      screen: BuySellScreen
     },
     Deposit: {
       screen: DepositScreen

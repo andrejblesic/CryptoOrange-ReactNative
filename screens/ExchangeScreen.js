@@ -1,5 +1,12 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View, Text, Image } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity
+} from 'react-native';
 import { Ionicons, FontAwesome, Feather } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { UserDrawer } from './HomeScreen';
@@ -58,7 +65,9 @@ export default function ExchangeScreen({ navigation }) {
         <Header style={styles.header} navigation={navigation} />
       </ScrollView>
       <View style={styles.bottomView}>
-        <Text style={styles.textStyle}>DEMO</Text>
+        <TouchableOpacity style={styles.bottomView}>
+          <Text style={styles.textStyle}>BUY / SELL</Text>
+        </TouchableOpacity>
       </View>
     </>
   );
