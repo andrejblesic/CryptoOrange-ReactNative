@@ -125,13 +125,12 @@ export function Header({ navigation, toggleUserDrawer, userDrawerOpen }) {
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'center',
-        boxShadow: '10px 10px 10px rgba(0,0,0,1)'
       }}
     >
       <Ionicons
         name="md-menu"
         color="#ED7F2C"
-        size={32}
+        size={28}
         style={styles.menuIcon}
         onPress={() => navigation.toggleDrawer()}
       />
@@ -149,7 +148,7 @@ export function Header({ navigation, toggleUserDrawer, userDrawerOpen }) {
         onPress={() => toggleUserDrawer()}
         style={{ position: 'absolute', zIndex: 99999, top: 13, right: 8 }}
       >
-        <Feather color="#ED7F2C" size={32} name="user" />
+        <Feather color="#ED7F2C" size={28} name="user" />
       </TouchableOpacity>
     </View>
   );
@@ -171,12 +170,12 @@ export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
     if (userDrawerOpen) {
       Animated.timing(xPosition, {
         toValue: 0,
-        duration: 200
+        duration: 300
       }).start();
     } else {
       Animated.timing(xPosition, {
         toValue: -300,
-        duration: 200
+        duration: 300
       }).start();
     }
   };
@@ -373,18 +372,6 @@ export default function HomeScreen({ navigation }) {
         style={styles.container}
         stickyHeaderIndices={[0]}
       >
-        {userDrawerOpen ? (
-          <TouchableOpacity
-            onPress={toggleUserDrawer}
-            activeOpacity={1}
-            style={{
-              backgroundColor: 'rgba(0,0,0, 0.5)',
-              height: '100%',
-              width: '100%',
-              position: 'absolute'
-            }}
-          ></TouchableOpacity>
-        ) : null}
         <Header
           userDrawerOpen={userDrawerOpen}
           toggleUserDrawer={toggleUserDrawer}
@@ -575,6 +562,64 @@ export default function HomeScreen({ navigation }) {
         toggleUserDrawer={toggleUserDrawer}
         userDrawerOpen={userDrawerOpen}
       />
+      <Overlay userDrawerOpen={userDrawerOpen} toggleUserDrawer={toggleUserDrawer} />
+      {/*userDrawerOpen ? (
+        <TouchableOpacity
+          onPress={toggleUserDrawer}
+          activeOpacity={1}
+          style={{
+            backgroundColor: 'rgba(0,0,0, 0.75)',
+            height: '100%',
+            width: 60,
+            position: 'absolute',
+            zIndex: -1
+          }}
+        ></TouchableOpacity>
+      ) : null*/}
+    </>
+  );
+}
+
+function Overlay({userDrawerOpen, toggleUserDrawer}) {
+
+  const [right] = useState(new Animated.Value(0))
+
+  const AnimatedOverlay = Animated.createAnimatedComponent(TouchableOpacity);
+
+  const toggleDrawer = () => {
+
+  };
+
+  useEffect(() => {
+    if (userDrawerOpen) {
+      Animated.timing(right, {
+        toValue: 300,
+        duration: 305
+      }).start();
+    } else {
+      Animated.timing(right, {
+        toValue: 0,
+        duration: 305
+      }).start();
+    }
+  }, [userDrawerOpen]);
+
+  return(
+    <>
+      {userDrawerOpen ?
+        <AnimatedOverlay
+          onPress={toggleUserDrawer}
+          activeOpacity={1}
+          style={{
+            backgroundColor: 'rgba(0,0,0, 0.75)',
+            height: '100%',
+            width: '100%',
+            right: right,
+            position: 'absolute',
+            zIndex: -1
+          }}
+        ></AnimatedOverlay> : null
+      }
     </>
   );
 }
