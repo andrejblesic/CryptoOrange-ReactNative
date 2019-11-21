@@ -1,6 +1,6 @@
 export function areaChart(width, timeScale) {
   return `
-  const websocketUrl = 'ws://myskinkit.ngrok.io/charts';
+  const websocketUrl = 'ws://co-mobile.omnitask.ba:9000/charts';
   const areaWs = new WebSocket(websocketUrl);
   const chart = LightweightCharts.createChart(document.getElementById('areachartdiv'), { width: ${width}, height: 300 });
   const areaSeries = chart.addAreaSeries();
@@ -43,25 +43,25 @@ export function candleChart(width, timeScale) {
   let color = 'white';
   switch ('${timeScale}') {
     case '1m':
-      candlestickUrl = 'ws://myskinkit.ngrok.io/candela';
+      candlestickUrl = 'ws://co-mobile.omnitask.ba:9000/candela';
       break;
     case '5m':
-      candlestickUrl = 'ws://myskinkit.ngrok.io/candela/5-minutes';
+      candlestickUrl = 'ws://co-mobile.omnitask.ba:9000/candela/5-minutes';
       break;
     case '15m':
-      candlestickUrl = 'ws://myskinkit.ngrok.io/candela/15-minutes';
+      candlestickUrl = 'ws://co-mobile.omnitask.ba:9000/candela/15-minutes';
       break;
     case '1h':
-      candlestickUrl = 'ws://myskinkit.ngrok.io/candela/1-hour';
+      candlestickUrl = 'ws://co-mobile.omnitask.ba:9000/candela/1-hour';
       break;
     case '3h':
-      candlestickUrl = 'ws://myskinkit.ngrok.io/candela/3-hour';
+      candlestickUrl = 'ws://co-mobile.omnitask.ba:9000/candela/3-hour';
       break;
     case '1D':
-      candlestickUrl = 'ws://myskinkit.ngrok.io/candela/1-day';
+      candlestickUrl = 'ws://co-mobile.omnitask.ba:9000/candela/1-day';
       break;
     case '1W':
-      candlestickUrl = 'ws://myskinkit.ngrok.io/candela/1-week';
+      candlestickUrl = 'ws://co-mobile.omnitask.ba:9000/candela/1-week';
       break;
     default:
       break;
