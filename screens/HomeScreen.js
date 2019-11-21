@@ -155,7 +155,7 @@ export function Header({ navigation, toggleUserDrawer, userDrawerOpen }) {
 }
 
 export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
-  const [xPosition] = useState(new Animated.Value(-300));
+  const [pan] = useState(new Animated.ValueXY());
   const [drawerOut, setDrawerOut] = useState(false);
 
   const statusBarHeight = Constants.statusBarHeight;
@@ -168,14 +168,16 @@ export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
 
   const toggleDrawer = () => {
     if (userDrawerOpen) {
-      Animated.timing(xPosition, {
-        toValue: 0,
-        duration: 300
+      Animated.timing(pan, {
+        toValue: {x: 60, y: 0},
+        duration: 300,
+        useNativeDriver: true
       }).start();
     } else {
-      Animated.timing(xPosition, {
-        toValue: -300,
-        duration: 300
+      Animated.timing(pan, {
+        toValue: {x: 360, y: 0},
+        duration: 300,
+        useNativeDriver: true
       }).start();
     }
   };
@@ -190,7 +192,7 @@ export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
         width: 300,
         backgroundColor: '#282c34',
         position: 'absolute',
-        right: xPosition
+        transform: pan.getTranslateTransform()
       }}
     >
       <View
@@ -582,41 +584,57 @@ export default function HomeScreen({ navigation }) {
 
 function Overlay({userDrawerOpen, toggleUserDrawer}) {
 
-  const [right] = useState(new Animated.Value(0))
+  const [pan] = useState(new Animated.ValueXY());
+  const [opacity] = useState(new Animated.Value(0));
 
   const AnimatedOverlay = Animated.createAnimatedComponent(TouchableOpacity);
 
   const toggleDrawer = () => {
-
+    if (userDrawerOpen) {
+      Animated.timing(pan, {
+        toValue: {x: -300, y: 0},
+        duration: 300,
+        useNativeDriver: true
+      }).start();
+      Animated.timing(opacity, {
+        toValue: 0.75,
+        duration: 100,
+        useNativeDriver: true
+      }).start();
+    } else {
+      Animated.timing(pan, {
+        toValue: {x: 300, y: 0},
+        duration: 0,
+        useNativeDriver: true
+      }).start();
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: true
+      }).start();
+    }
   };
 
   useEffect(() => {
-    if (userDrawerOpen) {
-      Animated.timing(right, {
-        toValue: 300,
-        duration: 305
-      }).start();
-    } else {
-      Animated.timing(right, {
-        toValue: 0,
-        duration: 305
-      }).start();
-    }
+    toggleDrawer();
   }, [userDrawerOpen]);
+
+  console.log(pan.getTranslateTransform());
 
   return(
     <>
       {userDrawerOpen ?
         <AnimatedOverlay
           onPress={toggleUserDrawer}
-          activeOpacity={1}
+          activeOpacity={0.75}
           style={{
-            backgroundColor: 'rgba(0,0,0, 0.75)',
+            opacity: opacity,
+            backgroundColor: 'rgb(0,0,0)',
             height: '100%',
             width: '100%',
-            right: right,
             position: 'absolute',
-            zIndex: -1
+            zIndex: -1,
+            transform: pan.getTranslateTransform()
           }}
         ></AnimatedOverlay> : null
       }
