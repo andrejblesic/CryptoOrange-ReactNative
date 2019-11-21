@@ -1,10 +1,20 @@
 import React from 'react';
 import { Platform, Dimensions } from 'react-native';
-import { createDrawerNavigator, createAppContainer, DrawerItems } from 'react-navigation';
+import {
+  createDrawerNavigator,
+  createAppContainer,
+  DrawerItems
+} from 'react-navigation';
 
 import HomeScreen from '../screens/HomeScreen';
 import LinkScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import DepositScreen from '../screens/DepositScreen';
+import WithdrawScreen from '../screens/WithdrawScreen';
+import HistoryScreen from '../screens/HistoryScreen';
+import NewsScreen from '../screens/NewsScreen';
+import SupportScreen from '../screens/SupportScreen';
+import ExchangeScreen from '../screens/ExchangeScreen';
 
 const WIDTH = Dimensions.get('window').width;
 const DrawerConfig = {
@@ -22,9 +32,30 @@ const DrawerNavigator = createDrawerNavigator(
     Home: {
       screen: HomeScreen
     },
-    Link: {
+    Balances: {
       screen: LinkScreen
     },
+    BuySell: {
+      screen: SettingsScreen
+    },
+    Deposit: {
+      screen: DepositScreen
+    },
+    Withdraw: {
+      screen: WithdrawScreen
+    },
+    AllHistory: {
+      screen: HistoryScreen
+    },
+    News: {
+      screen: NewsScreen
+    },
+    Support: {
+      screen: SupportScreen
+    },
+    Exchange: {
+      screen: ExchangeScreen
+    }
   },
   DrawerConfig
 );

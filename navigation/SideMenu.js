@@ -12,7 +12,7 @@ const sideMenu = DrawerNavigator({
     screen: HomeScreen
   },
   Links: {
-    screen: LinksScreen
+    screen: <Text>eeeeeeeee</Text>
   },
   Settings: {
     screen: SettingsScreen
