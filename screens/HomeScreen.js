@@ -152,7 +152,7 @@ export function Header({ navigation, toggleUserDrawer, userDrawerOpen }) {
 }
 
 export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
-  const [xPosition] = useState(new Animated.Value(-300));
+  const [xPosition] = useState(new Animated.ValueXY({x: 360, y: 0}));
   const [drawerOut, setDrawerOut] = useState(false);
 
   const statusBarHeight = Constants.statusBarHeight;
@@ -160,19 +160,22 @@ export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
   const width = Dimensions.get('window').width;
 
   useEffect(() => {
+    console.log(xPosition.getTranslateTransform());
     toggleDrawer();
   }, [userDrawerOpen]);
 
   const toggleDrawer = () => {
     if (userDrawerOpen) {
       Animated.timing(xPosition, {
-        toValue: 0,
-        duration: 300
+        toValue: {x: 60, y: 0},
+        duration: 300,
+        useNativeDriver: true
       }).start();
     } else {
       Animated.timing(xPosition, {
-        toValue: -300,
-        duration: 300
+        toValue: {x: 360, y: 0},
+        duration: 300,
+        useNativeDriver: true
       }).start();
     }
   };
@@ -187,7 +190,7 @@ export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
         width: 300,
         backgroundColor: '#282c34',
         position: 'absolute',
-        right: xPosition
+        transform: xPosition.getTranslateTransform()
       }}
     >
       <View
@@ -569,7 +572,7 @@ export default function HomeScreen({ navigation }) {
 
 function Overlay({userDrawerOpen, toggleUserDrawer}) {
 
-  const [right] = useState(new Animated.Value(0));
+  const [xPosition] = useState(new Animated.ValueXY({x: 0, y: 0}));
   const [opacity] = useState(new Animated.Value(0));
   const [showOverlay, setShowOverlay] = useState(false);
 
@@ -578,22 +581,26 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
   useEffect(() => {
     if (userDrawerOpen) {
       setShowOverlay(true);
-      Animated.timing(right, {
-        toValue: 300,
-        duration: 305
+      Animated.timing(xPosition, {
+        toValue: {x: -300, y: 0},
+        duration: 305,
+        useNativeDriver: true
       }).start();
       Animated.timing(opacity, {
         toValue: 0.8,
         duration: 300,
+        useNativeDriver: true
       }).start();
     } else {
       Animated.timing(opacity, {
         toValue: 0,
         duration: 300,
+        useNativeDriver: true
       }).start(() => setShowOverlay(false));
-      Animated.timing(right, {
-        toValue: 1,
-        duration: 305
+      Animated.timing(xPosition, {
+        toValue: {x: 0, y: 0},
+        duration: 305,
+        useNativeDriver: true
       }).start();
     }
   }, [userDrawerOpen]);
@@ -609,8 +616,8 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
           backgroundColor: 'rgba(0,0,0, 0.75)',
           height: showOverlay ? '100%' : 0,
           width: '100%',
-          right: right,
           position: 'absolute',
+          transform: xPosition.getTranslateTransform()
         }}
       ></AnimatedOverlay>
     </>
