@@ -55,8 +55,6 @@ function AreaChart(timeScale) {
   );
   const [currTimeScale, setCurrTimeScale] = useState('1h');
 
-  // console.log(Constants.statusBarHeight);
-
   useEffect(() => {
     setAreaChartJS(chartJS.areaChart(width, timeScale.timeScale));
     if (currTimeScale !== timeScale.timeScale) {
@@ -92,7 +90,6 @@ function CandleChart(timeScale) {
   useEffect(() => {
     setCandleChartJS(chartJS.candleChart(width, timeScale.timeScale));
     if (currTimeScale !== timeScale.timeScale) {
-      // CandleWebViewRef.reload();
       setReloadWebView(!isReloadWebView);
       setCurrTimeScale(timeScale.timeScale);
     }
@@ -566,19 +563,6 @@ export default function HomeScreen({ navigation }) {
         userDrawerOpen={userDrawerOpen}
       />
       <Overlay userDrawerOpen={userDrawerOpen} toggleUserDrawer={toggleUserDrawer} />
-      {/*userDrawerOpen ? (
-        <TouchableOpacity
-          onPress={toggleUserDrawer}
-          activeOpacity={1}
-          style={{
-            backgroundColor: 'rgba(0,0,0, 0.75)',
-            height: '100%',
-            width: 60,
-            position: 'absolute',
-            zIndex: -1
-          }}
-        ></TouchableOpacity>
-      ) : null*/}
     </>
   );
 }
@@ -587,15 +571,13 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
 
   const [right] = useState(new Animated.Value(0));
   const [opacity] = useState(new Animated.Value(0));
+  const [showOverlay, setShowOverlay] = useState(false);
 
   const AnimatedOverlay = Animated.createAnimatedComponent(TouchableOpacity);
 
-  const toggleDrawer = () => {
-
-  };
-
   useEffect(() => {
     if (userDrawerOpen) {
+      setShowOverlay(true);
       Animated.timing(right, {
         toValue: 300,
         duration: 305
@@ -605,34 +587,32 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
         duration: 300,
       }).start();
     } else {
-      Animated.timing(right, {
-        toValue: 0,
-        duration: 305
-      }).start();
       Animated.timing(opacity, {
         toValue: 0,
-        duration: 0,
+        duration: 300,
+      }).start(() => setShowOverlay(false));
+      Animated.timing(right, {
+        toValue: 1,
+        duration: 305
       }).start();
     }
   }, [userDrawerOpen]);
 
   return(
     <>
-      {userDrawerOpen ?
-        <AnimatedOverlay
-          onPress={toggleUserDrawer}
-          activeOpacity={0.8}
-          style={{
-            opacity: opacity,
-            backgroundColor: 'rgba(0,0,0, 0.75)',
-            height: '100%',
-            width: '100%',
-            right: right,
-            position: 'absolute',
-            zIndex: -1
-          }}
-        ></AnimatedOverlay> : null
-      }
+      <AnimatedOverlay
+        onPress={toggleUserDrawer}
+        activeOpacity={0.8}
+        style={{
+          pointerEvents: 'none',
+          opacity: opacity,
+          backgroundColor: 'rgba(0,0,0, 0.75)',
+          height: showOverlay ? '100%' : 0,
+          width: '100%',
+          right: right,
+          position: 'absolute',
+        }}
+      ></AnimatedOverlay>
     </>
   );
 }
@@ -760,11 +740,3 @@ const styles = StyleSheet.create({
     fontSize: 18
   }
 });
-
-// <WebView
-//   source={{html: html}}
-//   domStorageEnabled={true}
-//   javaScriptEnabled={true}
-//   style={styles.WebViewStyle}
-//   injectedJavaScript={injectJS}
-// />
