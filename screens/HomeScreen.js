@@ -27,6 +27,7 @@ import {
 import Constants from 'expo-constants';
 
 const statusBarHeight = Constants.statusBarHeight;
+const deviceWidth = Dimensions.get('window').width;
 const coinbaseWS = 'wss://ws-feed.pro.coinbase.com';
 const websocketUrl = 'ws://192.168.0.180:8000/charts';
 
@@ -152,7 +153,7 @@ export function Header({ navigation, toggleUserDrawer, userDrawerOpen }) {
 }
 
 export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
-  const [xPosition] = useState(new Animated.ValueXY({x: 360, y: 0}));
+  const [xPosition] = useState(new Animated.ValueXY({x: deviceWidth, y: 0}));
   const [drawerOut, setDrawerOut] = useState(false);
 
   const statusBarHeight = Constants.statusBarHeight;
@@ -167,13 +168,13 @@ export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
   const toggleDrawer = () => {
     if (userDrawerOpen) {
       Animated.timing(xPosition, {
-        toValue: {x: 60, y: 0},
+        toValue: {x: deviceWidth - 300, y: 0},
         duration: 300,
         useNativeDriver: true
       }).start();
     } else {
       Animated.timing(xPosition, {
-        toValue: {x: 360, y: 0},
+        toValue: {x: deviceWidth, y: 0},
         duration: 300,
         useNativeDriver: true
       }).start();
@@ -592,16 +593,16 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
         useNativeDriver: true
       }).start();
     } else {
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true
-      }).start(() => setShowOverlay(false));
       Animated.timing(xPosition, {
         toValue: {x: 0, y: 0},
         duration: 305,
         useNativeDriver: true
       }).start();
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true
+      }).start(() => setShowOverlay(false));
     }
   }, [userDrawerOpen]);
 
