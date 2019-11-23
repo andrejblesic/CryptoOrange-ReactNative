@@ -168,12 +168,14 @@ export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
   const toggleDrawer = () => {
     if (userDrawerOpen) {
       Animated.timing(xPosition, {
+        easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
         toValue: {x: deviceWidth - 300, y: 0},
         duration: 300,
         useNativeDriver: true
       }).start();
     } else {
       Animated.timing(xPosition, {
+        easing: Easing.bezier(0.55, 0.085, 0.68, 0.53),
         toValue: {x: deviceWidth, y: 0},
         duration: 300,
         useNativeDriver: true
@@ -584,6 +586,7 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
       setShowOverlay(true);
       Animated.timing(xPosition, {
         toValue: {x: -300, y: 0},
+        easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
         duration: 305,
         useNativeDriver: true
       }).start();
@@ -594,6 +597,7 @@ function Overlay({userDrawerOpen, toggleUserDrawer}) {
       }).start();
     } else {
       Animated.timing(xPosition, {
+        easing: Easing.bezier(0.55, 0.085, 0.68, 0.53),
         toValue: {x: 0, y: 0},
         duration: 305,
         useNativeDriver: true
