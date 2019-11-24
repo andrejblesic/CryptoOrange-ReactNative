@@ -50,14 +50,13 @@ const candleChartHtml = `
 `;
 
 function AreaChart(timeScale) {
-  const width = Dimensions.get('window').width;
   const [areaChartJS, setAreaChartJS] = useState(
-    chartJS.areaChart(width, timeScale.timeScale)
+    chartJS.areaChart(deviceWidth, timeScale.timeScale)
   );
   const [currTimeScale, setCurrTimeScale] = useState('1h');
 
   useEffect(() => {
-    setAreaChartJS(chartJS.areaChart(width, timeScale.timeScale));
+    setAreaChartJS(chartJS.areaChart(deviceWidth, timeScale.timeScale));
     if (currTimeScale !== timeScale.timeScale) {
       AreaWebViewRef.reload();
       setCurrTimeScale(timeScale.timeScale);
@@ -81,15 +80,14 @@ function AreaChart(timeScale) {
 }
 
 function CandleChart(timeScale) {
-  const width = Dimensions.get('window').width;
   const [candleChartJS, setCandleChartJS] = useState(
-    chartJS.candleChart(width, timeScale.timeScale)
+    chartJS.candleChart(deviceWidth, timeScale.timeScale)
   );
   const [currTimeScale, setCurrTimeScale] = useState('1h');
   const [isReloadWebView, setReloadWebView] = useState(false);
 
   useEffect(() => {
-    setCandleChartJS(chartJS.candleChart(width, timeScale.timeScale));
+    setCandleChartJS(chartJS.candleChart(deviceWidth, timeScale.timeScale));
     if (currTimeScale !== timeScale.timeScale) {
       setReloadWebView(!isReloadWebView);
       setCurrTimeScale(timeScale.timeScale);
@@ -161,7 +159,6 @@ export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
   const width = Dimensions.get('window').width;
 
   useEffect(() => {
-    console.log(xPosition.getTranslateTransform());
     toggleDrawer();
   }, [userDrawerOpen]);
 
