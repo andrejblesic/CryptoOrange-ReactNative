@@ -29,7 +29,6 @@ import Constants from 'expo-constants';
 const statusBarHeight = Constants.statusBarHeight;
 const deviceWidth = Dimensions.get('window').width;
 const coinbaseWS = 'wss://ws-feed.pro.coinbase.com';
-const websocketUrl = 'ws://192.168.0.180:8000/charts';
 
 const areaChartHtml = `
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1 mimum-scale=1">
@@ -54,13 +53,17 @@ function AreaChart(timeScale) {
     chartJS.areaChart(deviceWidth, timeScale.timeScale)
   );
   const [currTimeScale, setCurrTimeScale] = useState('1h');
+  const [isReloadWebView, setReloadWebView] = useState(false);
 
   useEffect(() => {
     setAreaChartJS(chartJS.areaChart(deviceWidth, timeScale.timeScale));
     if (currTimeScale !== timeScale.timeScale) {
-      AreaWebViewRef.reload();
+      setReloadWebView(!isReloadWebView);
       setCurrTimeScale(timeScale.timeScale);
     }
+    // return function cleanup() {
+    //   console.log('cleanup');
+    // }
   }, [timeScale]);
 
   return (
@@ -299,34 +302,24 @@ export function UserDrawer({ userDrawerOpen, toggleUserDrawer }) {
   );
 }
 
-export default function HomeScreen({ navigation }) {
-  const [selectedChart, setChart] = useState('candle');
+export function LivePrice() {
+  const [priceDrop, setDrop] = useState(null);
+  const [currPrice, setPrice] = useState(0);
   const [currencyPair, setPair] = useState('BTC-USD');
   const [socketOpened, setSocketOpened] = useState(false);
-  const [currPrice, setPrice] = useState(0);
-  const [priceDrop, setDrop] = useState(null);
-  const [timeScale, setTimeScale] = useState('1h');
-  const [userDrawerOpen, setUserDrawerOpen] = useState(false);
 
   let currentPrice = 0;
-
-  const toggleUserDrawer = () => {
-    if (userDrawerOpen) {
-      setUserDrawerOpen(false);
-    } else {
-      setUserDrawerOpen(true);
-    }
-  };
 
   useEffect(() => {
     if (!socketOpened) {
       opensocket(coinbaseWS);
     }
-  }, [socketOpened, currPrice]);
+  }, [socketOpened]);
 
   const opensocket = coinbaseWS => {
     const ws = new WebSocket(coinbaseWS);
     ws.onopen = () => {
+      console.log('coinbase socket opened');
       setSocketOpened(true);
       ws.send(
         JSON.stringify({
@@ -336,6 +329,10 @@ export default function HomeScreen({ navigation }) {
         })
       );
     };
+    ws.onclose = () => {
+      console.log('live price socket closed')
+      setSocketOpened(false);
+    }
     ws.onmessage = message => {
       if (JSON.parse(message.data).type === 'ticker') {
         const newPrice = parseFloat(JSON.parse(message.data).price);
@@ -350,13 +347,75 @@ export default function HomeScreen({ navigation }) {
         setPrice(newPrice.toFixed(2));
       }
     };
-    AppState.addEventListener('change', () => {
-      if (AppState.currentState === 'background') {
-        ws.close();
-      } else if (AppState.currentState === 'active') {
-        opensocket(coinbaseWS);
-      }
-    });
+  };
+
+  return(
+    <TouchableOpacity
+      activeOpacity={0.5}
+      style={{
+        margin: 10,
+        marginTop: 3,
+        marginLeft: 15,
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}
+    >
+      <Zocial
+        style={{ flex: 1 }}
+        name="bitcoin"
+        size={48}
+        color="#ED7F2C"
+      />
+      <View
+        style={{
+          flex: 2,
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          flexDirection: 'row'
+        }}
+      >
+        <Text
+          style={{
+            color: 'white',
+            fontSize: 14,
+            marginRight: 5,
+            marginBottom: -10
+          }}
+        >
+          BTC-USD
+        </Text>
+        <Text
+          style={{
+            color: priceDrop === true ? 'red' : 'green',
+            fontSize: 32
+          }}
+        >
+          {currPrice}
+        </Text>
+        <Entypo
+          name={priceDrop === true ? 'triangle-down' : 'triangle-up'}
+          size={24}
+          color={priceDrop === true ? 'red' : 'green'}
+        />
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+export default function HomeScreen({ navigation }) {
+  const [selectedChart, setChart] = useState('candle');
+  const [currencyPair, setPair] = useState('BTC-USD');
+  const [timeScale, setTimeScale] = useState('1h');
+  const [userDrawerOpen, setUserDrawerOpen] = useState(false);
+
+  const toggleUserDrawer = () => {
+    if (userDrawerOpen) {
+      setUserDrawerOpen(false);
+    } else {
+      setUserDrawerOpen(true);
+    }
   };
 
   const changeChart = () => {
@@ -384,57 +443,7 @@ export default function HomeScreen({ navigation }) {
           toggleUserDrawer={toggleUserDrawer}
           navigation={navigation}
         />
-        <TouchableOpacity
-          activeOpacity={0.5}
-          style={{
-            margin: 10,
-            marginTop: 3,
-            marginLeft: 15,
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}
-        >
-          <Zocial
-            style={{ flex: 1 }}
-            name="bitcoin"
-            size={48}
-            color="#ED7F2C"
-          />
-          <View
-            style={{
-              flex: 2,
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              flexDirection: 'row'
-            }}
-          >
-            <Text
-              style={{
-                color: 'white',
-                fontSize: 14,
-                marginRight: 5,
-                marginBottom: -10
-              }}
-            >
-              BTC-USD
-            </Text>
-            <Text
-              style={{
-                color: priceDrop === true ? 'red' : 'green',
-                fontSize: 32
-              }}
-            >
-              {currPrice}
-            </Text>
-            <Entypo
-              name={priceDrop === true ? 'triangle-down' : 'triangle-up'}
-              size={24}
-              color={priceDrop === true ? 'red' : 'green'}
-            />
-          </View>
-        </TouchableOpacity>
+        <LivePrice />
         {selectedChart === 'area' ? (
           <AreaChart timeScale={timeScale} />
         ) : (

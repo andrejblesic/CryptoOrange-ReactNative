@@ -16,25 +16,24 @@ export function areaChart(width, timeScale) {
       visible: true,timeVisible: true,
       secondsVisible: true,
     },
-      layout: {
-        backgroundColor: '#282c34',
-        textColor: '#696969',
-        fontSize: 12,
-        fontFamily: 'Calibri',
-      },
-    });
-    areaWs.onmessage = event => {const chartData = JSON.parse(event.data);
-      if (chartData.chart) {
-        for (const item in chartData.chart) {
-          chartData.chart[item].time = Math.floor(chartData.chart[item].time / 1000);
-        }
-        areaSeries.setData(chartData.chart);
-      } else if (!chartData.chart) {
-        chartData.time = Math.floor(chartData.time / 1000);
-        areaSeries.update(chartData);
+    layout: {
+      backgroundColor: '#282c34',
+      textColor: '#696969',
+      fontSize: 12,
+      fontFamily: 'Calibri',
+    },
+  });
+  areaWs.onmessage = event => {const chartData = JSON.parse(event.data);
+    if (chartData.chart) {
+      for (const item in chartData.chart) {
+        chartData.chart[item].time = Math.floor(chartData.chart[item].time / 1000);
       }
-    };
-  `;
+      areaSeries.setData(chartData.chart);
+    } else if (!chartData.chart) {
+      chartData.time = Math.floor(chartData.time / 1000);
+      areaSeries.update(chartData);
+    }
+  };`;
 }
 
 export function candleChart(width, timeScale) {
@@ -90,17 +89,16 @@ export function candleChart(width, timeScale) {
       fontFamily: 'Calibri',
     }
   });
-    candleWs.onmessage = event => {
-      const chartData = JSON.parse(event.data).candela;
-      if (chartData.length > 1) {
-        for (const item of chartData) {
-          item.time = parseInt(parseInt(item.time) / 1000);
-        }
-        candlestickSeries.setData(chartData)
-      } else if (!chartData.length) {
-        chartData.time = parseInt(parseInt(chartData.time) / 1000);
-        candlestickSeries.update(chartData);
+  candleWs.onmessage = event => {
+    const chartData = JSON.parse(event.data).candela;
+    if (chartData.length > 1) {
+      for (const item of chartData) {
+        item.time = parseInt(parseInt(item.time) / 1000);
       }
-    };
-  `;
+      candlestickSeries.setData(chartData)
+    } else if (!chartData.length) {
+      chartData.time = parseInt(parseInt(chartData.time) / 1000);
+      candlestickSeries.update(chartData);
+    }
+  };`;
 }
