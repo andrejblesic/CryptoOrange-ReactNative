@@ -11,7 +11,7 @@ import {
   Easing,
   Animated
 } from 'react-native';
-import { WebView, Dimensions, TouchableOpacity } from 'react-native';
+import { WebView, Dimensions, TouchableOpacity, AppState } from 'react-native';
 import { Button, ThemeProvider } from 'react-native-elements';
 import { MonoText } from '../components/StyledText';
 import * as chartJS from './chartJS.js';
@@ -350,6 +350,13 @@ export default function HomeScreen({ navigation }) {
         setPrice(newPrice.toFixed(2));
       }
     };
+    AppState.addEventListener('change', () => {
+      if (AppState.currentState === 'background') {
+        ws.close();
+      } else if (AppState.currentState === 'active') {
+        opensocket(coinbaseWS);
+      }
+    });
   };
 
   const changeChart = () => {
