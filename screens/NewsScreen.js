@@ -10,7 +10,6 @@ import {
 import { Ionicons, Entypo, Feather } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { UserDrawer } from './HomeScreen';
-// import { Header } from './HomeScreen';
 
 const statusBarHeight = Constants.statusBarHeight;
 
@@ -30,7 +29,7 @@ function Header({ navigation }) {
       <Ionicons
         name="md-menu"
         color="#ED7F2C"
-        size={32}
+        size={28}
         style={styles.menuIcon}
         onPress={() => navigation.toggleDrawer()}
       />
@@ -47,7 +46,7 @@ function Header({ navigation }) {
       <Feather
         color="#ED7F2C"
         style={{ position: 'absolute', zIndex: 99999, top: 13, right: 8 }}
-        size={32}
+        size={28}
         name="user"
       />
     </View>
