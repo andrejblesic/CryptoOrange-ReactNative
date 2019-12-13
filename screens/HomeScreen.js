@@ -89,7 +89,6 @@ function CandleChart({timeScale}) {
   const [chartLoading, setChartLoading] = useState(true);
 
   useEffect(() => {
-    console.log('benezcina');
     setChartLoading(true);
     setTimeout(() => {
       setChartLoading(false);
