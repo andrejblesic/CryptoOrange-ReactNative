@@ -9,7 +9,8 @@ import {
   TextInput,
   Image,
   Easing,
-  Animated
+  Animated,
+  ActivityIndicator
 } from 'react-native';
 import { WebView, Dimensions, TouchableOpacity, AppState } from 'react-native';
 import { Button, ThemeProvider } from 'react-native-elements';
@@ -32,18 +33,18 @@ const coinbaseWS = 'wss://ws-feed.pro.coinbase.com';
 
 const areaChartHtml = `
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1 mimum-scale=1">
-<style>body {margin: 0}</style>
+<style>body {margin: 0; max-height: 300px; height: 300px; background-color: #30343D}</style>
 <body>
-  <div id="areachartdiv"></div>
+  <div style="background-color: #30343D" id="areachartdiv"></div>
 </body>
 <script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>
 `;
 
 const candleChartHtml = `
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1 mimum-scale=1">
-<style>body {margin: 0}</style>
+<style>body {margin: 0; max-height: 300px; height: 300px; background-color: #30343D}</style>
 <body>
-  <div id="candlechartdiv"></div>
+  <div style="background-color: #30343D" id="candlechartdiv"></div>
 </body>
 <script src="https://unpkg.com/lightweight-charts@1.1.0/dist/lightweight-charts.standalone.production.js"></script>
 `;
@@ -64,7 +65,7 @@ function AreaChart(timeScale) {
   }, [timeScale]);
 
   return (
-    <View style={{ flex: 1, height: 300, zIndex: -1 }}>
+    <View style={{ backgroundColor: '#30343D', height: 300, zIndex: -1 }}>
       <WebView
         ref={AreaWVRef => (AreaWebViewRef = AreaWVRef)}
         originWhitelist={['*']}
@@ -79,34 +80,45 @@ function AreaChart(timeScale) {
   );
 }
 
-function CandleChart(timeScale) {
+function CandleChart({timeScale}) {
   const [candleChartJS, setCandleChartJS] = useState(
-    chartJS.candleChart(deviceWidth, timeScale.timeScale)
+    chartJS.candleChart(deviceWidth, timeScale)
   );
   const [currTimeScale, setCurrTimeScale] = useState('1h');
   const [isReloadWebView, setReloadWebView] = useState(false);
+  const [chartLoading, setChartLoading] = useState(true);
 
   useEffect(() => {
-    setCandleChartJS(chartJS.candleChart(deviceWidth, timeScale.timeScale));
-    if (currTimeScale !== timeScale.timeScale) {
+    console.log('benezcina');
+    setChartLoading(true);
+    setTimeout(() => {
+      setChartLoading(false);
+    }, 1000);
+    setCandleChartJS(chartJS.candleChart(deviceWidth, timeScale));
+    if (currTimeScale !== timeScale) {
       setReloadWebView(!isReloadWebView);
-      setCurrTimeScale(timeScale.timeScale);
+      setCurrTimeScale(timeScale);
     }
   }, [timeScale]);
 
   return (
-    <View style={{ flex: 1, height: 300, zIndex: -1 }}>
-      <WebView
-        ref={CandleWVref => (CandleWebViewRef = CandleWVref)}
-        key={isReloadWebView}
-        originWhitelist={['*']}
-        useWebKit={true}
-        source={{ html: candleChartHtml }}
-        domStorageEnabled={true}
-        javaScriptEnabled={true}
-        style={styles.WebViewStyle}
-        injectedJavaScript={candleChartJS}
-      />
+    <View style={{ backgroundColor: '#30343D', height: 300, zIndex: -1 }}>
+      {chartLoading ? <View style={{height: 3000}}>
+        <ActivityIndicator style={{marginTop: 130, zIndex: 9}} size="large" color="#FFFFFF" />
+      </View> : null}
+      <View style={{height: chartLoading ? 0 : 300, zIndex: chartLoading ? -99999 : 1}}>
+        <WebView
+          ref={CandleWVref => (CandleWebViewRef = CandleWVref)}
+          key={isReloadWebView}
+          originWhitelist={['*']}
+          useWebKit={true}
+          source={{ html: candleChartHtml }}
+          domStorageEnabled={true}
+          javaScriptEnabled={true}
+          style={{...styles.WebViewStyle, backgroundColor: '#30343D', height: 0}}
+          injectedJavaScript={candleChartJS}
+        />
+      </View>
     </View>
   );
 }
@@ -502,7 +514,7 @@ export default function HomeScreen({ navigation }) {
       </ScrollView>
       <View style={styles.bottomView}>
         <TouchableOpacity style={styles.bottomView}>
-          <Text style={styles.textStyle}>BUY / SELL</Text>
+          <Text style={styles.footerTextStyle}>BUY / SELL</Text>
         </TouchableOpacity>
       </View>
       <UserDrawer
@@ -624,7 +636,7 @@ function handleHelpPress() {
 const styles = StyleSheet.create({
   WebViewStyle: {
     flex: 2,
-    backgroundColor: '#30343D',
+    backgroundColor: '#30343D', // '#30343D',
     height: 300
   },
   container: {
@@ -685,7 +697,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  textStyle: {
+  footerTextStyle: {
     color: '#fff',
     fontSize: 18
   },
